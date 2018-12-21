@@ -20,7 +20,8 @@
                 <ProgressBar Width="242" Height="Auto"
                              Value="{Binding Percentage, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
             </StatusBarItem>
-            <StatusBarItem Content="{Binding State, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Foreground="{DynamicResource MaterialDesignBody}" />
+            <StatusBarItem Content="{Binding State, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                           Foreground="{DynamicResource MaterialDesignBody}" />
         </StatusBar>
     </Grid>
 </Window>

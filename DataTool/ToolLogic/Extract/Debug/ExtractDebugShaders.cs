@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using DataTool.FindLogic;
 using DataTool.Flag;
 using DataTool.Helper;
-using DataTool.SaveLogic;
 using TankLib;
 using TankLib.STU.Types;
 using static DataTool.Program;
@@ -13,46 +13,43 @@ using static DataTool.Helper.STUHelper;
 namespace DataTool.ToolLogic.Extract.Debug {
     [Tool("extract-debug-shaders", Description = "Extract shaders for a material (debug)", CustomFlags = typeof(ExtractFlags), IsSensitive = true)]
     public class ExtractDebugShaders : ITool {
-        public void Parse(ICLIFlags toolFlags) {
-            GetSoundbanks(toolFlags);
-        }
+        public void Parse(ICLIFlags toolFlags) { GetSoundbanks(toolFlags); }
 
         public void GetSoundbanks(ICLIFlags toolFlags) {
             const string container = "ShaderCode";
             //const ulong materialGUID = 0xE00000000005860;  // 000000005860.008: Sombra - League - NYXL - Main
             //const string matName = "Sombra - League - NYXL - Main";
-            
+
             //const ulong materialGUID = 0xE00000000006086;
             //const string matName = "Orisa - Nature - Leaves";
-            
+
             //const ulong materialGUID = 0xE00000000002381;
             //const string matName = "Maps - Tall bush";
-            
+
             //const ulong materialGUID = 0xE000000000008B2;
             //const string matName = "Widow - Odette - Arm tassels";
-            
-            
+
+
             // orisa owl
             //const ulong materialGUID = 0xE00000000005809;  // 000000005809.008: Orisa - League - NYXL - Team Decals
             //const string matName = "Orisa - League - NYXL - Team Decals";
-            
+
             //const ulong materialGUID = 0xE00000000005840;
             //const string matName = "Orisa - League - NYXL - Main";
-            
+
             //const ulong materialGUID = 0xE000000000051CC;
             //const string matName = "Orisa - League - NYXL - 51CC";
-            
-            string basePath;
-            if (toolFlags is ExtractFlags flags) {
-                basePath = flags.OutputPath;
-            } else {
-                throw new Exception("no output path");
-            }
 
-            string path = Path.Combine(basePath, container);
-            
+            string basePath;
+            if (toolFlags is ExtractFlags flags)
+                basePath = flags.OutputPath;
+            else
+                throw new Exception("no output path");
+
+            var path = Path.Combine(basePath, container);
+
             //TestModelLook(0x98000000000682F); // Chateau - Lake
-            
+
             //SaveMaterial(path, 0xE00000000004F46, "Chateau - Tower - Body");
             //SaveMaterial(path, 0xE00000000004F45, "Chateau - Tower - Borders");
             //SaveMaterial(path, 0xE00000000004D4B, "Chateau - Tower - Windows");
@@ -69,7 +66,7 @@ namespace DataTool.ToolLogic.Extract.Debug {
             //     SaveShaderInstance(allPath, inst, teResourceGUID.AsString(inst));
             // }
             // return;
-            
+
             SaveMaterial(path, 0xE00000000002381, "Chateau - Tall bush");
             SaveMaterial(path, 0xE00000000004D29, "Chateau - Lake");
             //SaveMaterial(path, 0xE00000000004F0B, "Chateau - Background - Road");
@@ -78,16 +75,16 @@ namespace DataTool.ToolLogic.Extract.Debug {
             SaveMaterial(path, 0xE000000000040C0, "Orisa - Classic - Main");
             SaveMaterial(path, 0xE00000000000171, "Reaper - Classic - Main");
             SaveMaterial(path, 0xE00000000005BBB, "Brigitte - Classic - Hair");
-            
+
             //SavePostFX(path);
             //SaveScreenQuad(path);
             Save088(path);
         }
 
         public void TestModelLook(ulong guid) {
-            STUModelLook modelLook = GetInstance<STUModelLook>(guid);
-        } 
-        
+            var modelLook = GetInstance<STUModelLook>(guid);
+        }
+
         public void Save088(string basePath) {
             var path = Path.Combine(basePath, "088");
 
@@ -99,22 +96,21 @@ namespace DataTool.ToolLogic.Extract.Debug {
             //    }
             //}
 
-            foreach (ulong guid in TrackedFiles[0x88]) {
-                using (Stream stream = IO.OpenFile(guid)) {
-                    teShaderGroup shaderGroup = new teShaderGroup(stream);
+            foreach (var guid in TrackedFiles[0x88])
+                using (var stream = IO.OpenFile(guid)) {
+                    var shaderGroup = new teShaderGroup(stream);
 
-                    string groupPath = Path.Combine(path, teResourceGUID.AsString(guid));
-                
+                    var groupPath = Path.Combine(path, teResourceGUID.AsString(guid));
+
                     SaveShaderGroup(shaderGroup, groupPath);
                 }
-            }
         }
 
         public void SaveScreenQuad(string basePath) {
             var path = Path.Combine(basePath, "ScreenQuad");
-            using (Stream stream = IO.OpenFile((teResourceGUID)0xE1000000000000C)) {
-                teShaderGroup shaderGroup = new teShaderGroup(stream);
-                
+            using (var stream = IO.OpenFile((teResourceGUID) 0xE1000000000000C)) {
+                var shaderGroup = new teShaderGroup(stream);
+
                 SavePostShader(path, shaderGroup, 0xF1B0EC09, "s_pVShader");
                 SavePostShader(path, shaderGroup, 0x2183B37B, "s_pGeometryVShader");
                 SavePostShader(path, shaderGroup, 0xF203D3B5, "s_pDepthVShader");
@@ -124,8 +120,8 @@ namespace DataTool.ToolLogic.Extract.Debug {
 
         public void SavePostFX(string basePath) {
             var path = Path.Combine(basePath, "PostFX");
-            using (Stream stream = IO.OpenFile((teResourceGUID)0xE10000000000044)) {
-                teShaderGroup shaderGroup = new teShaderGroup(stream);
+            using (var stream = IO.OpenFile((teResourceGUID) 0xE10000000000044)) {
+                var shaderGroup = new teShaderGroup(stream);
 
                 SavePostShader(path, shaderGroup, 0xF0A5D76B, "CopyPointSampledState");
                 SavePostShader(path, shaderGroup, 0x64DADF24, "OutlineFinalizeState");
@@ -165,35 +161,35 @@ namespace DataTool.ToolLogic.Extract.Debug {
                 SavePostShader(path, shaderGroup, 0xC35D5688, "VerticalOutlineBlurState");
                 SavePostShader(path, shaderGroup, 0x2314B25F, "OutlineBlackState");
                 //SavePostShader(path, shaderGroup, 0x2314B25F, "OutlineClearToBlackState"); // same as m_outlineBlackState
-                
+
                 SavePostShader(path, shaderGroup, 0xA5DBBF87, "PostUnkVertex1");
                 SavePostShader(path, shaderGroup, 0xC335DDAE, "PostUnkVertex2");
-                
-                
             }
         }
 
-        public void SavePostShader(string path, teShaderGroup shaderGroup, uint hash, string name) {
-            teResourceGUID state = shaderGroup.GetShaderByHash(hash);
+        public void SavePostShader(string        path,
+                                   teShaderGroup shaderGroup,
+                                   uint          hash,
+                                   string        name) {
+            var state = shaderGroup.GetShaderByHash(hash);
             if (state == 0) {
                 Console.Out.WriteLine($"Couldn't find {hash} / {name}");
                 return;
             }
+
             SaveShaderInstance(path, state, name);
         }
 
         public void SaveCompute(string path) {
-            Dictionary<ulong, int> bufferOccr = new Dictionary<ulong, int>();
-            
-            foreach (ulong guid in TrackedFiles[0x86]) {
-                teShaderInstance instance = new teShaderInstance(IO.OpenFile(guid));
+            var bufferOccr = new Dictionary<ulong, int>();
+
+            foreach (var guid in TrackedFiles[0x86]) {
+                var instance = new teShaderInstance(IO.OpenFile(guid));
                 //teShaderCode shaderCode = new teShaderCode(IO.OpenFile(instance.Header.ShaderCode));
 
                 if (instance.BufferHeaders == null) continue;
-                foreach (teShaderInstance.BufferHeader bufferHeader in instance.BufferHeaders) {
-                    if (!bufferOccr.ContainsKey(bufferHeader.Hash)) {
-                        bufferOccr[bufferHeader.Hash] = 0;
-                    }
+                foreach (var bufferHeader in instance.BufferHeaders) {
+                    if (!bufferOccr.ContainsKey(bufferHeader.Hash)) bufferOccr[bufferHeader.Hash] = 0;
 
                     bufferOccr[bufferHeader.Hash]++;
                 }
@@ -203,8 +199,8 @@ namespace DataTool.ToolLogic.Extract.Debug {
                 //}
             }
 
-            int i = 0;
-            foreach (KeyValuePair<ulong, int> buffer in bufferOccr.OrderByDescending(x => x.Value)) {
+            var i = 0;
+            foreach (var buffer in bufferOccr.OrderByDescending(x => x.Value)) {
                 Console.Out.WriteLine($"{buffer.Key:X16}: {buffer.Value}");
                 i++;
 
@@ -215,48 +211,49 @@ namespace DataTool.ToolLogic.Extract.Debug {
         }
 
         public static void SaveMaterial(string basePath, ulong materialGUID, string name) {
-            string path = Path.Combine(basePath, name, IO.GetFileName(materialGUID));
-            string rawPath = Path.Combine(path, "raw");
-            string imgPath = Path.Combine(path, "img");
+            var path    = Path.Combine(basePath, name, IO.GetFileName(materialGUID));
+            var rawPath = Path.Combine(path,     "raw");
+            var imgPath = Path.Combine(path,     "img");
             // IO.CreateDirectorySafe(path);
             IO.CreateDirectorySafe(rawPath);
 
-            teMaterial material = new teMaterial(IO.OpenFile(materialGUID));
-            
-            IO.WriteFile(materialGUID, rawPath);
+            var material = new teMaterial(IO.OpenFile(materialGUID));
+
+            IO.WriteFile(materialGUID,                 rawPath);
             IO.WriteFile(material.Header.ShaderSource, rawPath);
-            IO.WriteFile(material.Header.ShaderGroup, rawPath);
-            IO.WriteFile(material.Header.GUIDx03A, rawPath);
+            IO.WriteFile(material.Header.ShaderGroup,  rawPath);
+            IO.WriteFile(material.Header.GUIDx03A,     rawPath);
             IO.WriteFile(material.Header.MaterialData, rawPath);
 
-            using (Stream stream = IO.OpenFile(material.Header.MaterialData)) {
+            using (var stream = IO.OpenFile(material.Header.MaterialData)) {
                 if (stream != null) {
-                    teMaterialData materialData = new teMaterialData(stream);
+                    var materialData = new teMaterialData(stream);
                     if (materialData.Textures != null) {
-                        FindLogic.Combo.ComboInfo comboInfo = new FindLogic.Combo.ComboInfo();
+                        var comboInfo = new Combo.ComboInfo();
                         foreach (var texture in materialData.Textures) {
-                            FindLogic.Combo.Find(comboInfo, texture.TextureGUID);
+                            Combo.Find(comboInfo, texture.TextureGUID);
                             comboInfo.SetTextureName(texture.TextureGUID, texture.NameHash.ToString("X8"));
                         }
-                        Combo.SaveLooseTextures(null, imgPath, comboInfo);
+
+                        SaveLogic.Combo.SaveLooseTextures(null, imgPath, comboInfo);
                     }
                 }
             }
-            
-            teShaderGroup shaderGroup = new teShaderGroup(IO.OpenFile(material.Header.ShaderGroup));
+
+            var shaderGroup = new teShaderGroup(IO.OpenFile(material.Header.ShaderGroup));
             SaveShaderGroup(shaderGroup, path);
         }
 
         public static void SaveShaderGroup(teShaderGroup shaderGroup, string path) {
-            int i = 0;
+            var i = 0;
             foreach (ulong shaderGroupInstance in shaderGroup.Instances) {
-                teShaderInstance instance = new teShaderInstance(IO.OpenFile(shaderGroupInstance));
-                teShaderCode shaderCode = new teShaderCode(IO.OpenFile(instance.Header.ShaderCode));
+                var instance   = new teShaderInstance(IO.OpenFile(shaderGroupInstance));
+                var shaderCode = new teShaderCode(IO.OpenFile(instance.Header.ShaderCode));
 
                 string name = null;
-                if (shaderGroup.Hashes != null && shaderGroup.Hashes[i] != 0) {
-                    name = shaderGroup.Hashes[i].ToString("X8");
-                }
+                if (shaderGroup.Hashes != null && shaderGroup.Hashes[i] != 0)
+                    name = shaderGroup.Hashes[i]
+                                      .ToString("X8");
 
                 SaveShaderInstance(path, shaderGroupInstance, name, instance, shaderCode);
                 i++;
@@ -264,38 +261,37 @@ namespace DataTool.ToolLogic.Extract.Debug {
         }
 
         public static void SaveShaderInstance(string path, ulong guid, string name) {
-            using (Stream stream = IO.OpenFile(guid)) {
+            using (var stream = IO.OpenFile(guid)) {
                 if (stream == null) return;
-                teShaderInstance instance = new teShaderInstance(stream);
-                using (Stream stream2 = IO.OpenFile(instance.Header.ShaderCode)) {
+                var instance = new teShaderInstance(stream);
+                using (var stream2 = IO.OpenFile(instance.Header.ShaderCode)) {
                     if (stream2 == null) return;
-                    teShaderCode shaderCode = new teShaderCode(stream2);
+                    var shaderCode = new teShaderCode(stream2);
                     SaveShaderInstance(path, guid, name, instance, shaderCode);
                 }
             }
         }
 
-        public static void SaveShaderInstance(string path, ulong guid, string name, teShaderInstance instance, teShaderCode shaderCode) {
-            if (name == null) {
-                name = teResourceGUID.AsString(guid);
-            }
-            string instanceDirectory = Path.Combine(path, shaderCode.Header.ShaderType.ToString(), name);
-            IO.WriteFile(guid, instanceDirectory);
+        public static void SaveShaderInstance(string           path,
+                                              ulong            guid,
+                                              string           name,
+                                              teShaderInstance instance,
+                                              teShaderCode     shaderCode) {
+            if (name == null) name = teResourceGUID.AsString(guid);
+            var instanceDirectory  = Path.Combine(path, shaderCode.Header.ShaderType.ToString(), name);
+            IO.WriteFile(guid,                       instanceDirectory);
             IO.WriteFile(instance.Header.ShaderCode, instanceDirectory);
-                
+
             //using (Stream file = File.OpenWrite(Path.Combine(instanceDirectory, IO.GetFileName(instance.Header.ShaderCode)))) {
             //    file.SetLength(0);
             //    file.Write(shaderCode.Data, 0, shaderCode.Header.DataSize);
             //}
 
-            using (StreamWriter writer =
-                new StreamWriter(Path.Combine(instanceDirectory, IO.GetFileName(instance.Header.ShaderCode)) + ".meta")) {
+            using (var writer = new StreamWriter(Path.Combine(instanceDirectory, IO.GetFileName(instance.Header.ShaderCode)) + ".meta")) {
                 writer.WriteLine($"{shaderCode.Header.ShaderType}");
                 writer.WriteLine("{texture \"hash\"} : {shader input index}");
                 if (instance.ShaderResources == null) return;
-                foreach (teShaderInstance.ShaderResourceDefinition textureInputDefinition in instance.ShaderResources) {
-                    writer.WriteLine($"{textureInputDefinition.NameHash:X8} : {textureInputDefinition.Register}");
-                }
+                foreach (var textureInputDefinition in instance.ShaderResources) writer.WriteLine($"{textureInputDefinition.NameHash:X8} : {textureInputDefinition.Register}");
             }
         }
     }

@@ -4,7 +4,6 @@
              xmlns:local="clr-namespace:TankView"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary>
-        </ResourceDictionary>
+        <ResourceDictionary />
     </Application.Resources>
 </Application>

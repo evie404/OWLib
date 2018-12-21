@@ -13,23 +13,21 @@ namespace DataTool.ToolLogic.Dump {
         public void Parse(ICLIFlags toolFlags) {
             var strings = GetStrings();
 
-            if (toolFlags is DumpFlags flags) {
+            if (toolFlags is DumpFlags flags)
                 if (flags.JSON) {
                     OutputJSON(strings, flags);
                     return;
                 }
-            }
 
-            foreach (KeyValuePair<teResourceGUID, UXDisplayText> str in strings) {
-                Log($"{str.Key}: {str.Value.Value}");
-            }
+            foreach (var str in strings) Log($"{str.Key}: {str.Value.Value}");
         }
 
         public Dictionary<teResourceGUID, UXDisplayText> GetStrings() {
             var strings = new Dictionary<teResourceGUID, UXDisplayText>();
 
-            foreach (teResourceGUID guid in TrackedFiles[0x7C].OrderBy(teResourceGUID.Index)) {
-                UXDisplayText displayText = new UXDisplayText(guid);
+            foreach (teResourceGUID guid in TrackedFiles[0x7C]
+                .OrderBy(teResourceGUID.Index)) {
+                var displayText = new UXDisplayText(guid);
                 if (displayText.Value == null) continue;
                 strings[guid] = displayText;
             }

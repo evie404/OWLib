@@ -9,14 +9,10 @@ using static DataTool.Helper.Logger;
 namespace DataTool.JSON {
     public class JSONTool {
         internal void OutputJSON(object jObj, ListFlags toolFlags) {
-            CompositeResolver.RegisterAndSetAsDefault(new IJsonFormatter[] {
-                new ResourceGUIDFormatter()
-            }, new[] {
-                StandardResolver.Default
-            });
-            byte[] json = JsonSerializer.NonGeneric.Serialize(jObj.GetType(), jObj);
+            CompositeResolver.RegisterAndSetAsDefault(new IJsonFormatter[] { new ResourceGUIDFormatter() }, new[] { StandardResolver.Default });
+            var json = JsonSerializer.NonGeneric.Serialize(jObj.GetType(), jObj);
             if (!string.IsNullOrWhiteSpace(toolFlags.Output)) {
-                byte[] pretty = JsonSerializer.PrettyPrintByteArray(json);
+                var pretty = JsonSerializer.PrettyPrintByteArray(json);
 
                 Log("Writing to {0}", toolFlags.Output);
 

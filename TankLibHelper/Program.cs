@@ -18,36 +18,34 @@ namespace TankLibHelper {
                 Console.Out.WriteLine("Usage: TankLibHelper {mode} [mode args]");
                 return;
             }
-            string mode = args[0];
+
+            var mode = args[0];
 
             IMode modeObject;
-            Dictionary<string, Type> modes = GetModes();
+            var   modes = GetModes();
 
             if (modes.ContainsKey(mode)) {
-                modeObject = (IMode)Activator.CreateInstance(modes[mode]);
+                modeObject = (IMode) Activator.CreateInstance(modes[mode]);
             } else {
                 Console.Out.WriteLine($"Unknown mode: {mode}");
                 Console.Out.WriteLine("Valid modes are:");
-                foreach (string modeName in modes.Keys) {
-                    Console.Out.WriteLine($"    {modeName}");
-                }
+                foreach (var modeName in modes.Keys) Console.Out.WriteLine($"    {modeName}");
                 return;
             }
 
-            ModeResult result = modeObject.Run(args);
+            var result = modeObject.Run(args);
 
-            if (result == ModeResult.Fail) {
+            if (result == ModeResult.Fail)
                 Console.Out.WriteLine($"\r\n{mode} failed to execute successfully");
-            } else if (result == ModeResult.Success) {
-                Console.Out.WriteLine("\r\nDone");
-            }
+            else if (result == ModeResult.Success) Console.Out.WriteLine("\r\nDone");
         }
 
         public static Dictionary<string, Type> GetModes() {
-            Dictionary<string, Type> modes = new Dictionary<string, Type>();
-            foreach (Type modeType in typeof(IMode).Assembly.GetTypes().Where(x => typeof(IMode).IsAssignableFrom(x))) {
+            var modes = new Dictionary<string, Type>();
+            foreach (var modeType in typeof(IMode).Assembly.GetTypes()
+                                                  .Where(x => typeof(IMode).IsAssignableFrom(x))) {
                 if (modeType.IsInterface) continue;
-                IMode inst = (IMode)Activator.CreateInstance(modeType);
+                var inst = (IMode) Activator.CreateInstance(modeType);
                 modes[inst.Mode] = modeType;
             }
 

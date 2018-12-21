@@ -12,7 +12,7 @@ namespace DataTool.ToolLogic.List {
     [Tool("list-achievements", Description = "List achievements", CustomFlags = typeof(ListFlags))]
     public class ListAchievements : JSONTool, ITool {
         public void Parse(ICLIFlags toolFlags) {
-            List<Achievement> achievements = GetAchievements();
+            var achievements = GetAchievements();
 
             if (toolFlags is ListFlags flags)
                 if (flags.JSON) {
@@ -20,27 +20,27 @@ namespace DataTool.ToolLogic.List {
                     return;
                 }
 
-            foreach (Achievement achievement in achievements) {
+            foreach (var achievement in achievements) {
                 var iD = new IndentHelper();
-                
+
                 Log($"{achievement.Name}");
-                Log($"{iD+1}Description: {achievement.Description}");
-                
+                Log($"{iD + 1}Description: {achievement.Description}");
+
                 if (achievement.Reward != null)
-                    Log($"{iD+1}Reward: {achievement.Reward.Name} ({achievement.Reward.Rarity} {achievement.Reward.Type})");
+                    Log($"{iD + 1}Reward: {achievement.Reward.Name} ({achievement.Reward.Rarity} {achievement.Reward.Type})");
 
                 Log();
             }
         }
 
         public List<Achievement> GetAchievements() {
-            List<Achievement> achievements = new List<Achievement>();
+            var achievements = new List<Achievement>();
 
-            foreach (ulong key in TrackedFiles[0x68]) {
-                STUAchievement achievement = GetInstance<STUAchievement>(key);
+            foreach (var key in TrackedFiles[0x68]) {
+                var achievement = GetInstance<STUAchievement>(key);
                 if (achievement == null) continue;
-                
-                Achievement model = new Achievement(achievement);
+
+                var model = new Achievement(achievement);
                 achievements.Add(model);
             }
 

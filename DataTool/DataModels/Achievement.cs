@@ -7,34 +7,32 @@ namespace DataTool.DataModels {
     [DataContract]
     public class Achievement {
         [DataMember]
-        public string Name;
-        
+        public Enum_116F9601 Category;
+
         [DataMember]
         public string Description;
-        
-        [DataMember]
-        public Unlock Reward;
-        
-        [DataMember]
-        public Enum_8E40F295 Trophy;
-        
-        [DataMember]
-        public Enum_116F9601 Category;
 
         [DataMember]
         public int GamerScore;
 
+        [DataMember]
+        public string Name;
+
+        [DataMember]
+        public Unlock Reward;
+
+        [DataMember]
+        public Enum_8E40F295 Trophy;
+
         public Achievement(STUAchievement achievement) {
-            Name = GetString(achievement.m_name);
+            Name        = GetString(achievement.m_name);
             Description = GetString(achievement.m_description);
 
-            Trophy = achievement.m_trophy;
-            Category = achievement.m_category;
+            Trophy     = achievement.m_trophy;
+            Category   = achievement.m_category;
             GamerScore = achievement.m_gamerScore;
 
-            if (achievement.m_unlock != 0) {
-                Reward = new Unlock(achievement.m_unlock);
-            }
+            if (achievement.m_unlock != 0) Reward = new Unlock(achievement.m_unlock);
         }
     }
 }

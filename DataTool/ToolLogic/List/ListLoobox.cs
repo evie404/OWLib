@@ -11,7 +11,7 @@ namespace DataTool.ToolLogic.List {
     [Tool("list-lootbox", Description = "List lootboxes", CustomFlags = typeof(ListFlags))]
     public class ListLoobox : JSONTool, ITool {
         public void Parse(ICLIFlags toolFlags) {
-            List<LootBox> lootboxes = GetLootboxes();
+            var lootboxes = GetLootboxes();
 
             if (toolFlags is ListFlags flags)
                 if (flags.JSON) {
@@ -19,21 +19,19 @@ namespace DataTool.ToolLogic.List {
                     return;
                 }
 
-            foreach (LootBox lootbox in lootboxes) {
+            foreach (var lootbox in lootboxes) {
                 Log($"{lootbox.Name}");
-                if (lootbox.ShopCards != null) {
-                    foreach (LootBoxShopCard shopCard in lootbox.ShopCards) {
+                if (lootbox.ShopCards != null)
+                    foreach (var shopCard in lootbox.ShopCards)
                         Log($"\t{shopCard.Text}");
-                    }
-                }
             }
         }
 
         public List<LootBox> GetLootboxes() {
-            List<LootBox> @return = new List<LootBox>();
+            var @return = new List<LootBox>();
 
-            foreach (ulong key in TrackedFiles[0xCF]) {
-                STULootBox lootbox = GetInstance<STULootBox>(key);
+            foreach (var key in TrackedFiles[0xCF]) {
+                var lootbox = GetInstance<STULootBox>(key);
                 if (lootbox == null) continue;
 
                 @return.Add(new LootBox(lootbox));

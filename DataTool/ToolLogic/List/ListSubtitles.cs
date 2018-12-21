@@ -12,7 +12,7 @@ namespace DataTool.ToolLogic.List {
     [Tool("list-subtitles", Description = "List subtitles", CustomFlags = typeof(ListFlags))]
     public class ListSubtitles : JSONTool, ITool {
         public void Parse(ICLIFlags toolFlags) {
-            Dictionary<teResourceGUID, string[]> subtitles = GetSubtitles();
+            var subtitles = GetSubtitles();
 
             if (toolFlags is ListFlags flags)
                 if (flags.JSON) {
@@ -20,12 +20,10 @@ namespace DataTool.ToolLogic.List {
                     return;
                 }
 
-            IndentHelper i = new IndentHelper();
-            foreach (KeyValuePair<teResourceGUID, string[]> subtitle in subtitles) {
+            var i = new IndentHelper();
+            foreach (var subtitle in subtitles) {
                 Log($"{subtitle.Key}");
-                foreach (string s in subtitle.Value) {
-                    Log($"{i+1}{s}");
-                }
+                foreach (var s in subtitle.Value) Log($"{i + 1}{s}");
                 Log();
             }
         }
@@ -36,21 +34,21 @@ namespace DataTool.ToolLogic.List {
         }
 
         public string[] GetSubtitlesInternal(STU_7A68A730 subtitleContainer) {
-            List<string> @return = new List<string>();
+            var @return = new List<string>();
 
             GetSubtitle(@return, subtitleContainer.m_798027DE);
             GetSubtitle(@return, subtitleContainer.m_A84AA2B5);
             GetSubtitle(@return, subtitleContainer.m_D872E45C);
             GetSubtitle(@return, subtitleContainer.m_1485B834);
-            
+
             return @return.ToArray();
         }
 
         public Dictionary<teResourceGUID, string[]> GetSubtitles() {
-            Dictionary<teResourceGUID, string[]> @return = new Dictionary<teResourceGUID, string[]>();
+            var @return = new Dictionary<teResourceGUID, string[]>();
 
             foreach (teResourceGUID key in TrackedFiles[0x71]) {
-                STU_7A68A730 subtitleContainer = GetInstance<STU_7A68A730>(key);
+                var subtitleContainer = GetInstance<STU_7A68A730>(key);
                 if (subtitleContainer == null) continue;
 
                 @return[key] = GetSubtitlesInternal(subtitleContainer);

@@ -2,10 +2,30 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using TankLib.Math;
+
 // ReSharper disable IdentifierTypo
 
 namespace TankLib.Helpers {
     public static class ConsoleSwatch {
+        public enum DOSColor {
+            Black       = 0,
+            DarkBlue    = 1,
+            DarkGreen   = 2,
+            DarkCyan    = 3,
+            DarkRed     = 4,
+            DarkMagenta = 5,
+            DarkYellow  = 6,
+            Gray        = 7,
+            DarkGray    = 8,
+            Blue        = 9,
+            Green       = 10,
+            Cyan        = 11,
+            Red         = 12,
+            Magenta     = 13,
+            Yellow      = 14,
+            White       = 15
+        }
+
         public enum XTermColor : byte {
             Black = 0,
             Maroon,
@@ -263,34 +283,20 @@ namespace TankLib.Helpers {
             Grey29,
             Grey30,
             Grey31
-        };
-
-        public enum DOSColor {
-            Black = 0,
-            DarkBlue = 1,
-            DarkGreen = 2,
-            DarkCyan = 3,
-            DarkRed = 4,
-            DarkMagenta = 5,
-            DarkYellow = 6,
-            Gray = 7,
-            DarkGray = 8,
-            Blue = 9,
-            Green = 10,
-            Cyan = 11,
-            Red = 12,
-            Magenta = 13,
-            Yellow = 14,
-            White = 15
         }
 
-        public static ConsoleColor AsConsoleColor(this DOSColor color) {
-            return (ConsoleColor) color;
-        }
+        public const  string ColorReset                         = "\x1b[0m";
+        private const int    STD_OUTPUT_HANDLE                  = -11;
+        private const int    ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
 
-        public static DOSColor AsDOSColor(this ConsoleColor color) {
-            return (DOSColor) color;
-        }
+        private static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+
+        public static bool IsVTEnabled { get; private set; }
+        public static bool IsVTCapable { get; private set; } = Environment.OSVersion.Version.Major >= 6;
+
+        public static ConsoleColor AsConsoleColor(this DOSColor color) { return (ConsoleColor) color; }
+
+        public static DOSColor AsDOSColor(this ConsoleColor color) { return (DOSColor) color; }
 
         public static XTermColor AsXTermColor(this DOSColor color) {
             // ReSharper disable once SwitchStatementMissingSomeCases
@@ -308,60 +314,35 @@ namespace TankLib.Helpers {
             }
         }
 
-        public static string ToForeground(this XTermColor color) {
-            return $"\x1b[38;5;{(byte) color}m";
-        }
+        public static string ToForeground(this XTermColor color) { return $"\x1b[38;5;{(byte) color}m"; }
 
-        public static string ToBackground(this XTermColor color) {
-            return $"\x1b[48;5;{(byte) color}m";
-        }
+        public static string ToBackground(this XTermColor color) { return $"\x1b[48;5;{(byte) color}m"; }
 
-        public static string ToForeground(this Color color) {
-            return $"\x1b[38;2;{color.R};{color.G};{color.B}m";
-        }
+        public static string ToForeground(this Color color) { return $"\x1b[38;2;{color.R};{color.G};{color.B}m"; }
 
-        public static string ToBackground(this Color color) {
-            return $"\x1b[48;2;{color.R};{color.G};{color.B}m";
-        }
+        public static string ToBackground(this Color color) { return $"\x1b[48;2;{color.R};{color.G};{color.B}m"; }
 
-        public static string ToForeground(this teColorRGB color) {
-            return $"\x1b[38;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m";
-        }
+        public static string ToForeground(this teColorRGB color) { return $"\x1b[38;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m"; }
 
-        public static string ToBackground(this teColorRGB color) {
-            return $"\x1b[48;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m";
-        }
+        public static string ToBackground(this teColorRGB color) { return $"\x1b[48;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m"; }
 
-        public static string ToForeground(this teColorRGBA color) {
-            return $"\x1b[38;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m";
-        }
+        public static string ToForeground(this teColorRGBA color) { return $"\x1b[38;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m"; }
 
-        public static string ToBackground(this teColorRGBA color) {
-            return $"\x1b[48;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m";
-        }
-
-        public const string ColorReset = "\x1b[0m";
-
-        public static bool IsVTEnabled { get; private set; }
-        public static bool IsVTCapable { get; private set; } = Environment.OSVersion.Version.Major >= 6;
+        public static string ToBackground(this teColorRGBA color) { return $"\x1b[48;2;{(int) (color.R * 255.0f)};{(int) (color.G * 255.0f)};{(int) (color.B * 255.0f)}m"; }
 
         public static bool EnableVT() {
-            if (IsVTEnabled) {
-                return true;
-            }
+            if (IsVTEnabled) return true;
 
-            if (!IsVTCapable) {
-                return false;
-            }
+            if (!IsVTCapable) return false;
 
             unsafe {
-                IntPtr hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+                var hOut = GetStdHandle(STD_OUTPUT_HANDLE);
                 if (hOut == INVALID_HANDLE_VALUE) {
                     IsVTCapable = false;
                     return false;
                 }
 
-                int dwMode = 0;
+                var dwMode = 0;
                 if (!GetConsoleMode(hOut, &dwMode)) {
                     IsVTCapable = false;
                     return false;
@@ -386,9 +367,5 @@ namespace TankLib.Helpers {
 
         [DllImport("Kernel32.dll")]
         private static extern bool SetConsoleMode(IntPtr hConsoleHandle, int dwMode);
-
-        private static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
-        private const int STD_OUTPUT_HANDLE = -11;
-        private const int ENABLE_VIRTUAL_TERMINAL_PROCESSING = 4;
     }
 }

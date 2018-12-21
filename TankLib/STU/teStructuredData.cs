@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,66 +8,52 @@ using TankLib.Helpers.Hash;
 
 namespace TankLib.STU {
     /// <summary>
-    /// Structured Data parser
+    ///     Structured Data parser
     /// </summary>
     public class teStructuredData {
         // ReSharper disable once InconsistentNaming
         /// <summary>"v1" STU magic number</summary>
         public static readonly int STRUCTURED_DATA_IMMUTABLE_MAGIC = Util.GetMagicBytes('S', 'T', 'U', 'D');
-        public static readonly teStructuredDataMgr Manager = new teStructuredDataMgr();
-        
-        /// <summary>CRC64 of the header</summary>
-        public ulong HeaderChecksum;
-        
-        /// <summary>Loaded instances</summary>
-        public STUInstance[] Instances;
-        
-        /// <summary>Type of STU structure this asset uses</summary>
-        public teStructuredDataFormat Format;
-        
-        #region V2
-        public STUBag<STUInstance_Info> InstanceInfo;
-        public STUBag<STUInlineArray_Info> InlinedTypesInfo;
-        public STUBag<STUBag<STUField_Info>> FieldInfoBags;
-        #endregion
 
-        #region V1
-        private Dictionary<long, STUInstance> _instanceOffsets;
-        public STUInstanceRecordV1[] InstanceInfoV1;
-        #endregion
-        
-        #region Streams
-        public BinaryReader DynData;
-        public BinaryReader Data;
-        #endregion
+        public static readonly teStructuredDataMgr Manager = new teStructuredDataMgr();
 
         /// <summary>Data start position</summary>
         internal readonly long StartPos;
 
         private bool _preserveStream;
-   
+
+        /// <summary>Type of STU structure this asset uses</summary>
+        public teStructuredDataFormat Format;
+
+        /// <summary>CRC64 of the header</summary>
+        public ulong HeaderChecksum;
+
+        /// <summary>Loaded instances</summary>
+        public STUInstance[] Instances;
+
         /// <summary>Load STU asset from a stream</summary>
         /// <param name="stream">The stream to load from</param>
         /// <param name="keepOpen">Leave the stream open after reading</param>
-        public teStructuredData(Stream stream, bool keepOpen=false) {
+        public teStructuredData(Stream stream, bool keepOpen = false) {
             StartPos = stream.Position;
-            using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8, keepOpen)) {
+            using (var reader = new BinaryReader(stream, Encoding.UTF8, keepOpen)) {
                 Deserialize(reader);
             }
+
             FinishDeserialize();
         }
-        
+
         /// <summary>Load STU asset from a BinaryReader</summary>
         /// <param name="reader">The BinaryReader to load from</param>
         public teStructuredData(BinaryReader reader) {
             _preserveStream = true;
-            StartPos = reader.BaseStream.Position;
+            StartPos        = reader.BaseStream.Position;
             Deserialize(reader);
             FinishDeserialize();
         }
 
         private void Deserialize(BinaryReader reader) {
-            uint magic = reader.ReadUInt32();
+            var magic = reader.ReadUInt32();
 
             if (magic == STRUCTURED_DATA_IMMUTABLE_MAGIC) {
                 Format = teStructuredDataFormat.V1;
@@ -87,30 +72,30 @@ namespace TankLib.STU {
 
             reader.BaseStream.Position = StartPos;
 
-            STUHeaderV1 header = reader.Read<STUHeaderV1>();
+            var header = reader.Read<STUHeaderV1>();
 
             InstanceInfoV1 = new STUInstanceRecordV1[header.InstanceCount];
-            Instances = new STUInstance[header.InstanceCount];
-            for (int i = 0; i < header.InstanceCount; i++) {
-                STUInstanceRecordV1 record = reader.Read<STUInstanceRecordV1>();
+            Instances      = new STUInstance[header.InstanceCount];
+            for (var i = 0; i < header.InstanceCount; i++) {
+                var record = reader.Read<STUInstanceRecordV1>();
                 InstanceInfoV1[i] = record;
 
-                long position = reader.BaseStream.Position;
+                var position = reader.BaseStream.Position;
                 reader.BaseStream.Position = record.Offset + StartPos;
-                uint instanceHash = reader.ReadUInt32();
-                uint nextOffset = reader.ReadUInt32();
+                var instanceHash = reader.ReadUInt32();
+                var nextOffset   = reader.ReadUInt32();
 
-                STUInstance instance = Manager.CreateInstance(instanceHash);
+                var instance = Manager.CreateInstance(instanceHash);
                 _instanceOffsets[record.Offset] = instance;
-                Instances[i] = instance;
+                Instances[i]                    = instance;
 
                 reader.BaseStream.Position = position;
             }
 
             Data = reader; // hmm
 
-            for (int i = 0; i < header.InstanceCount; i++) {
-                STUInstanceRecordV1 record = InstanceInfoV1[i];
+            for (var i = 0; i < header.InstanceCount; i++) {
+                var record = InstanceInfoV1[i];
 
                 if (Instances[i] == null) continue;
 
@@ -136,8 +121,8 @@ namespace TankLib.STU {
 
                 reader.BaseStream.Position = record.Offset + StartPos;
 
-                uint instanceHash = reader.ReadUInt32();
-                uint nextOffset = reader.ReadUInt32();
+                var instanceHash = reader.ReadUInt32();
+                var nextOffset   = reader.ReadUInt32();
 
                 //if (instanceHash == 0xEA30C5E9) continue;
                 //if (instanceHash == 0x05C7059E) {
@@ -146,7 +131,8 @@ namespace TankLib.STU {
             #if RELEASE
                 try {
             #endif
-                Instances[i].Deserialize(this);
+                Instances[i]
+                    .Deserialize(this);
             #if RELEASE
                 } catch (Exception) {
                     // ignored
@@ -158,49 +144,51 @@ namespace TankLib.STU {
                 //}
             }
 
-            Instances[0].Usage = TypeUsage.Root;
+            Instances[0]
+                .Usage = TypeUsage.Root;
         }
 
         /// <summary>Read a "Version2" STU asset</summary>
         private void DeserializeV2(BinaryReader reader) {
             reader.BaseStream.Position = StartPos;
-            HeaderChecksum = CRC.CRC64(reader.ReadBytes(36));
+            HeaderChecksum             = CRC.CRC64(reader.ReadBytes(36));
             reader.BaseStream.Position = StartPos;
             SerializableHelper.Deserialize(reader, out InstanceInfo);
             SerializableHelper.Deserialize(reader, out InlinedTypesInfo);
             SerializableHelper.Deserialize(reader, out FieldInfoBags);
-            
-            int dynDataSize = reader.ReadInt32();
-            int dynDataOff = reader.ReadInt32();
-            int dataBufferOffset = reader.ReadInt32();
+
+            var dynDataSize      = reader.ReadInt32();
+            var dynDataOff       = reader.ReadInt32();
+            var dataBufferOffset = reader.ReadInt32();
             if (dynDataSize > 0) {
                 reader.BaseStream.Position = dynDataOff + StartPos;
-                DynData = new BinaryReader(new MemoryStream(reader.ReadBytes(dynDataSize)));
+                DynData                    = new BinaryReader(new MemoryStream(reader.ReadBytes(dynDataSize)));
             }
+
             if (dataBufferOffset < reader.BaseStream.Length) {
-                long dataSize = reader.BaseStream.Length - dataBufferOffset;
+                var dataSize = reader.BaseStream.Length - dataBufferOffset;
                 if (dataSize > int.MaxValue) throw new Exception("oops");
 
                 reader.BaseStream.Position = dataBufferOffset + StartPos;
-                Data = new BinaryReader(new MemoryStream(reader.ReadBytes((int)dataSize)));
+                Data                       = new BinaryReader(new MemoryStream(reader.ReadBytes((int) dataSize)));
             }
 
             if (InstanceInfo.Count > 0) {
                 Instances = new STUInstance[InstanceInfo.Count];
-                for (int i = 0; i < InstanceInfo.Count; i++) {
-                    Instances[i] = Manager.CreateInstance(InstanceInfo[i].Hash);
-                }
+                for (var i = 0; i < InstanceInfo.Count; i++)
+                    Instances[i] = Manager.CreateInstance(InstanceInfo[i]
+                                                              .Hash);
             }
-            
-            for (int i = 0; i != InstanceInfo.Count; ++i) {
-                STUInstance_Info info = InstanceInfo[i];
-                STUInstance instance = Instances[i];
 
-                long startPosition = Data.Position();
+            for (var i = 0; i != InstanceInfo.Count; ++i) {
+                var info     = InstanceInfo[i];
+                var instance = Instances[i];
+
+                var startPosition = Data.Position();
 
                 if (instance != null) {
                     instance.Deserialize(this);
-                    long endPosition = Data.Position();
+                    var endPosition = Data.Position();
                 }
 
                 Data.BaseStream.Position = startPosition + info.Size;
@@ -221,9 +209,9 @@ namespace TankLib.STU {
                 Data?.Dispose();
                 DynData?.Dispose();
             }
-            Data = null;
+
+            Data    = null;
             DynData = null;
-            
         }
 
         /// <summary>Get the primary instance of this asset</summary>
@@ -231,14 +219,35 @@ namespace TankLib.STU {
             if (Instances.Length == 0) return null;
             return Instances[0] as T;
         }
-        
+
         public T GetInstance<T>() where T : STUInstance {
-            return Instances.OfType<T>().FirstOrDefault();
+            return Instances.OfType<T>()
+                            .FirstOrDefault();
         }
-        
-        public IEnumerable<T> GetInstances<T>() where T : STUInstance {
-            return Instances.OfType<T>();
-        }
+
+        public IEnumerable<T> GetInstances<T>() where T : STUInstance { return Instances.OfType<T>(); }
+
+        #region V2
+
+        public STUBag<STUInstance_Info>      InstanceInfo;
+        public STUBag<STUInlineArray_Info>   InlinedTypesInfo;
+        public STUBag<STUBag<STUField_Info>> FieldInfoBags;
+
+        #endregion
+
+        #region V1
+
+        private Dictionary<long, STUInstance> _instanceOffsets;
+        public  STUInstanceRecordV1[]         InstanceInfoV1;
+
+        #endregion
+
+        #region Streams
+
+        public BinaryReader DynData;
+        public BinaryReader Data;
+
+        #endregion
     }
 
     public enum teStructuredDataFormat {

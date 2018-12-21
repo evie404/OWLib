@@ -2,11 +2,11 @@
 
 namespace TankView.ViewModel {
     public class ProgressInfo : INotifyPropertyChanged {
+        private int    _pc;
         private string _state = "Idle";
-        private int _pc = 0;
 
         public string State {
-            get { return _state; }
+            get => _state;
             set {
                 _state = value;
                 NotifyPropertyChanged(nameof(State));
@@ -14,7 +14,7 @@ namespace TankView.ViewModel {
         }
 
         public int Percentage {
-            get { return _pc; }
+            get => _pc;
             set {
                 _pc = value;
                 NotifyPropertyChanged(nameof(Percentage));
@@ -23,8 +23,6 @@ namespace TankView.ViewModel {
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void NotifyPropertyChanged(string name) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        public void NotifyPropertyChanged(string name) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
     }
 }

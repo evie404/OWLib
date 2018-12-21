@@ -3,19 +3,18 @@ using System.Runtime.InteropServices;
 
 namespace TankLib.Chunks {
     public class teEffectComponentSound : IChunk {
-        public string ID => "ECSO";
+        public Structure Header;
+        public string    ID => "ECSO";
+
+        public void Parse(Stream stream) {
+            using (var reader = new BinaryReader(stream)) {
+                Header = reader.Read<Structure>();
+            }
+        }
 
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
         public struct Structure {
             public teResourceGUID Sound;
-        }
-
-        public Structure Header;
-
-        public void Parse(Stream stream) {
-            using (BinaryReader reader = new BinaryReader(stream)) {
-                Header = reader.Read<Structure>();
-            }
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.ComponentModel;
+using System.Windows;
 using TankView.Properties;
-using TACTLib.Client.HandlerArgs;
 
 namespace TankView.ViewModel {
     public class AppSettings : INotifyPropertyChanged {
@@ -10,18 +10,16 @@ namespace TankView.ViewModel {
         public bool EnableDarkMode {
             get => _darkMode;
             set {
-                _darkMode = value;
+                _darkMode                 = value;
                 Settings.Default.DarkMode = value;
                 Settings.Default.Save();
-                (App.Current as App)?.SetDarkMode(EnableDarkMode);
+                (Application.Current as App)?.SetDarkMode(EnableDarkMode);
                 NotifyPropertyChanged(nameof(EnableDarkMode));
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void NotifyPropertyChanged(string name) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
+        public void NotifyPropertyChanged(string name) { PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name)); }
     }
 }

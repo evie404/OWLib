@@ -22,8 +22,7 @@
         MinWidth="865"
         MinHeight="450"
         ContentRendered="FirstChance"
-        IsEnabled="False"
-        >
+        IsEnabled="False">
     <Window.Resources>
         <om:SizeConverter x:Key="SizeConverter" />
         <om:EnumConverter x:Key="EnumConverter" />
@@ -107,16 +106,16 @@
                       IsEnabled="{Binding IsDataReady, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
             <MenuItem Header="DataTool" Click="OpenOrFocusSimView"
                       IsEnabled="{Binding IsDataToolSafe, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-            
+
             <MenuItem IsEnabled="{Binding IsDataReady, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}">
                 <MenuItem.Header>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <TextBox Width="300" TextChanged="GUIDSearch"
-                                 IsEnabled="{Binding IsDataReady, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></TextBox>
+                                 IsEnabled="{Binding IsDataReady, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                     </Grid>
                 </MenuItem.Header>
             </MenuItem>
@@ -129,7 +128,7 @@
             <TreeView Grid.Column="0" x:Name="FolderView" VirtualizingPanel.IsVirtualizing="True"
                       VirtualizingPanel.VirtualizationMode="Recycling" AllowDrop="False"
                       ItemsSource="{Binding Root, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"
-                      ItemTemplate="{StaticResource FolderDataView}" >
+                      ItemTemplate="{StaticResource FolderDataView}">
                 <TreeView.Resources>
                     <ContextMenu x:Key="ExtractTree">
                         <MenuItem Header="Extract" Click="ExtractFolder" />
@@ -139,7 +138,7 @@
                     <Style TargetType="{x:Type TreeViewItem}">
                         <EventSetter Event="Selected" Handler="ChangeActiveNode" />
                         <Setter Property="ContextMenu" Value="{StaticResource ExtractTree}" />
-                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}"></Setter>
+                        <Setter Property="Foreground" Value="{DynamicResource MaterialDesignBody}" />
                     </Style>
                 </TreeView.ItemContainerStyle>
             </TreeView>
@@ -184,7 +183,8 @@
                 <ProgressBar Width="242" Height="Auto"
                              Value="{Binding Percentage, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
             </StatusBarItem>
-            <StatusBarItem Content="{Binding State, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Foreground="{DynamicResource MaterialDesignBody}" />
+            <StatusBarItem Content="{Binding State, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                           Foreground="{DynamicResource MaterialDesignBody}" />
         </StatusBar>
     </Grid>
 </Window>

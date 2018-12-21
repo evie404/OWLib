@@ -24,69 +24,56 @@ namespace TankTonka {
             const string locale = "enUS";
 
             DataTool.Program.Flags = new ToolFlags {
-                OverwatchDirectory = args[0],
-                Language = locale,
-                SpeechLanguage = locale,
-                UseCache = true,
-                CacheCDNData = true,
-            };
+                                                       OverwatchDirectory = args[0],
+                                                       Language           = locale,
+                                                       SpeechLanguage     = locale,
+                                                       UseCache           = true,
+                                                       CacheCDNData       = true
+                                                   };
 
             _outputDirectory = args[1];
-            ushort[] types = args.Skip(2).Select(x => ushort.Parse(x, NumberStyles.HexNumber)).ToArray();
+            var types = args.Skip(2)
+                            .Select(x => ushort.Parse(x, NumberStyles.HexNumber))
+                            .ToArray();
             if (types.Length == 0) types = null;
 
             DataTool.Program.InitStorage(false);
 
-            CompositeResolver.RegisterAndSetAsDefault(new IJsonFormatter[] {
-                new AssetRepoTypeFormatter(),
-                new ResourceGUIDFormatter()
-            }, new[] {
-                StandardResolver.Default
-            });
+            CompositeResolver.RegisterAndSetAsDefault(new IJsonFormatter[] { new AssetRepoTypeFormatter(), new ResourceGUIDFormatter() }, new[] { StandardResolver.Default });
 
-            if (types == null) {
-                foreach (KeyValuePair<ushort, HashSet<ulong>> type in DataTool.Program.TrackedFiles) {
+            if (types == null)
+                foreach (var type in DataTool.Program.TrackedFiles)
                     ProcessType(type.Key);
-                }
-            } else {
-                foreach (ushort type in types) {
+            else
+                foreach (var type in types)
                     ProcessType(type);
-                }
-            }
-            
-            using (Stream outputFile = File.OpenWrite(Path.Combine(_outputDirectory, $"missing.json"))) {
+
+            using (Stream outputFile = File.OpenWrite(Path.Combine(_outputDirectory, "missing.json"))) {
                 outputFile.SetLength(0);
-                byte[] buf = JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(IO.MissingKeyLog.ToList()));
+                var buf = JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(IO.MissingKeyLog.ToList()));
                 outputFile.Write(buf, 0, buf.Length);
             }
         }
 
         private static void ProcessType(ushort type) {
-            if (!DataTool.Program.TrackedFiles.ContainsKey(type)) {
-                return;
-            }
-            
-            TypeManifest manifest = new TypeManifest {
-                Type = (Common.AssetRepoType) type
-            };
+            if (!DataTool.Program.TrackedFiles.ContainsKey(type)) return;
 
-            if (TypeClassifications.STUv2.Contains(type)) {
+            var manifest = new TypeManifest { Type = (Common.AssetRepoType) type };
+
+            if (TypeClassifications.STUv2.Contains(type))
                 ProcessTypeSTUv2(type, manifest);
-            } else {
+            else
                 ProcessTypeBlob(type, manifest);
-            }
         }
 
         private static void ProcessTypeBlob(ushort type, TypeManifest manifest) {
-            if (TypeClassifications.KnownPayload.Contains(type)) {
-                return;
-            }
-            
-            manifest.StructuredDataInfo = new Common.StructuredDataInfo();
-            HashSet<Common.AssetRepoType> referenceTypes = new HashSet<Common.AssetRepoType>();
+            if (TypeClassifications.KnownPayload.Contains(type)) return;
 
-            string typeDirectory = Path.Combine(_outputDirectory, type.ToString("X3"));
-            string assetDirectory = Path.Combine(typeDirectory, "assets");
+            manifest.StructuredDataInfo = new Common.StructuredDataInfo();
+            var referenceTypes = new HashSet<Common.AssetRepoType>();
+
+            var typeDirectory  = Path.Combine(_outputDirectory, type.ToString("X3"));
+            var assetDirectory = Path.Combine(typeDirectory,    "assets");
             IO.CreateDirectorySafe(assetDirectory);
 
             Parallel.ForEach(DataTool.Program.TrackedFiles[type], x => ProcessAssetBlob(x, assetDirectory));
@@ -95,28 +82,21 @@ namespace TankTonka {
         }
 
         private static void ProcessAssetBlob(ulong guid, string typeDir) {
-            using (Stream s = IO.OpenFile(guid)) {
-                if (s == null) {
-                    return;
-                }
+            using (var s = IO.OpenFile(guid)) {
+                if (s == null) return;
 
-                byte[] data = new byte[s.Length];
+                var data = new byte[s.Length];
                 s.Read(data, 0, data.Length);
 
 
-                AssetRecord record = new AssetRecord {
-                    GUID = (teResourceGUID) guid,
-                    References = new HashSet<teResourceGUID>()
-                };
-                
+                var record = new AssetRecord { GUID = (teResourceGUID) guid, References = new HashSet<teResourceGUID>() };
+
                 unsafe {
                     fixed (byte* ptr = data) {
                         var i = 0;
                         while (i + 8 <= data.Length) {
-                            ulong sig = *(ulong*)(ptr + i);
-                            if (DataTool.Program.ValidKey(sig)) {
-                                record.References.Add((teResourceGUID)sig);
-                            }
+                            var sig = *(ulong*) (ptr + i);
+                            if (DataTool.Program.ValidKey(sig)) record.References.Add((teResourceGUID) sig);
                             i += 1;
                         }
                     }
@@ -124,7 +104,7 @@ namespace TankTonka {
 
                 using (Stream outputFile = File.OpenWrite(Path.Combine(typeDir, $"{teResourceGUID.AsString(guid)}.json"))) {
                     outputFile.SetLength(0);
-                    byte[] buf = JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(record));
+                    var buf = JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(record));
                     outputFile.Write(buf, 0, buf.Length);
                 }
             }
@@ -132,10 +112,10 @@ namespace TankTonka {
 
         private static void ProcessTypeSTUv2(ushort type, TypeManifest manifest) {
             manifest.StructuredDataInfo = new Common.StructuredDataInfo();
-            HashSet<Common.AssetRepoType> referenceTypes = new HashSet<Common.AssetRepoType>();
+            var referenceTypes = new HashSet<Common.AssetRepoType>();
 
-            string typeDirectory = Path.Combine(_outputDirectory, type.ToString("X3"));
-            string assetDirectory = Path.Combine(typeDirectory, "assets");
+            var typeDirectory  = Path.Combine(_outputDirectory, type.ToString("X3"));
+            var assetDirectory = Path.Combine(typeDirectory,    "assets");
             IO.CreateDirectorySafe(assetDirectory);
 
             Parallel.ForEach(DataTool.Program.TrackedFiles[type], x => ProcessAssetSTUv2(x, assetDirectory));
@@ -144,23 +124,23 @@ namespace TankTonka {
         }
 
         private static void ProcessAssetSTUv2(ulong guid, string typeDir) {
-            teStructuredData structuredData = STUHelper.OpenSTUSafe(guid);
+            var structuredData = STUHelper.OpenSTUSafe(guid);
             if (structuredData == null) return;
 
-            AssetRecord record = new AssetRecord {
-                GUID = (teResourceGUID) guid,
-                StructuredDataInfo = new Common.StructuredDataInfo(),
-                References = new HashSet<teResourceGUID>()
-            };
+            var record = new AssetRecord {
+                                             GUID               = (teResourceGUID) guid,
+                                             StructuredDataInfo = new Common.StructuredDataInfo(),
+                                             References         = new HashSet<teResourceGUID>()
+                                         };
 
-            foreach (STUInstance instance in structuredData.Instances) {
+            foreach (var instance in structuredData.Instances) {
                 if (instance == null) continue;
                 STUv2ProcessInstance(record, instance);
             }
 
             using (Stream outputFile = File.OpenWrite(Path.Combine(typeDir, $"{teResourceGUID.AsString(guid)}.json"))) {
                 outputFile.SetLength(0);
-                byte[] buf = JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(record));
+                var buf = JsonSerializer.PrettyPrintByteArray(JsonSerializer.Serialize(record));
                 outputFile.Write(buf, 0, buf.Length);
             }
         }
@@ -168,33 +148,28 @@ namespace TankTonka {
         private static void STUv2ProcessInstance(AssetRecord record, STUInstance instance) {
             var fields = GetFields(instance.GetType(), true);
 
-            foreach (FieldInfo field in fields) {
-                object fieldValue = field.GetValue(instance);
-                Type fieldType = field.FieldType;
+            foreach (var field in fields) {
+                var fieldValue = field.GetValue(instance);
+                var fieldType  = field.FieldType;
                 if (fieldValue == null) continue;
 
                 var fieldAttribute = field.GetCustomAttribute<STUFieldAttribute>();
-                if (fieldAttribute != null) {
+                if (fieldAttribute != null)
                     if (fieldAttribute.ReaderType == typeof(InlineInstanceFieldReader)) {
                         if (!fieldType.IsArray) {
                             STUv2ProcessInstance(record, (STUInstance) fieldValue);
                         } else {
-                            IEnumerable enumerable = (IEnumerable) fieldValue;
-                            foreach (object val in enumerable) {
-                                STUv2ProcessInstance(record, (STUInstance) val);
-                            }
+                            var enumerable = (IEnumerable) fieldValue;
+                            foreach (var val in enumerable) STUv2ProcessInstance(record, (STUInstance) val);
                         }
 
                         return;
                     }
-                }
 
                 if (fieldType.IsArray) {
-                    Type elementType = fieldType.GetElementType();
-                    IEnumerable enumerable = (IEnumerable) fieldValue;
-                    foreach (object val in enumerable) {
-                        STUv2ProcessField(record, val, elementType);
-                    }
+                    var elementType = fieldType.GetElementType();
+                    var enumerable  = (IEnumerable) fieldValue;
+                    foreach (var val in enumerable) STUv2ProcessField(record, val, elementType);
                 } else {
                     STUv2ProcessField(record, fieldValue, fieldType);
                 }
@@ -208,37 +183,32 @@ namespace TankTonka {
             }
 
             if (fieldType.IsGenericType) {
-                Type genericBase = fieldType.GetGenericTypeDefinition();
-                
-                Type[] genericParams = fieldType.GetGenericArguments();
+                var genericBase = fieldType.GetGenericTypeDefinition();
+
+                var genericParams = fieldType.GetGenericArguments();
                 if (genericBase != typeof(teStructuredDataAssetRef<>)) return;
-                
-                MethodInfo method = typeof(Program).GetMethod(nameof(GetAssetRefGUID));
+
+                var method = typeof(Program).GetMethod(nameof(GetAssetRefGUID));
                 if (method == null) return;
-                
+
                 method = method.MakeGenericMethod(genericParams);
-                record.References.Add((teResourceGUID) method.Invoke(null, new[] {value}));
+                record.References.Add((teResourceGUID) method.Invoke(null, new[] { value }));
                 return;
             }
 
             if (!(value is ulong @ulong)) return;
             if (@ulong == 0) return;
-            ushort type = teResourceGUID.Type(@ulong);
-            if (type > 1 && type < 0xFF) {
-                record.References.Add((teResourceGUID) @ulong);
-            }
+            var type = teResourceGUID.Type(@ulong);
+            if (type > 1 && type < 0xFF) record.References.Add((teResourceGUID) @ulong);
         }
 
         internal static FieldInfo[] GetFields(Type type, bool doParent = false) {
-            FieldInfo[] parent = new FieldInfo[0];
-            if (type.BaseType != null && type.BaseType.Namespace != null &&
-                !type.BaseType.Namespace.StartsWith("System.") && doParent) parent = GetFields(type.BaseType);
-            return parent.Concat(type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance |
-                                                BindingFlags.DeclaredOnly)).ToArray();
+            var parent                                                                                                                         = new FieldInfo[0];
+            if (type.BaseType != null && type.BaseType.Namespace != null && !type.BaseType.Namespace.StartsWith("System.") && doParent) parent = GetFields(type.BaseType);
+            return parent.Concat(type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                         .ToArray();
         }
 
-        public static teResourceGUID GetAssetRefGUID<T>(teStructuredDataAssetRef<T> val) {
-            return val.GUID;
-        }
+        public static teResourceGUID GetAssetRefGUID<T>(teStructuredDataAssetRef<T> val) { return val.GUID; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace TankLibHelper {
     public enum ModeResult {
-        None = 0,
+        None    = 0,
         Success = 1,
-        Fail = 2,
+        Fail    = 2
     }
 }

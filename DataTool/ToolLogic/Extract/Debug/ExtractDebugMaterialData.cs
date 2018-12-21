@@ -3,9 +3,7 @@
 namespace DataTool.ToolLogic.Extract.Debug {
     [Tool("extract-debug-materialdata", Description = "Extract material data hashes (debug)", CustomFlags = typeof(ExtractFlags), IsSensitive = true)]
     public class ExtractDebugMaterialData : ITool {
-        public void Parse(ICLIFlags toolFlags) {
-            GetSoundbanks(toolFlags);
-        }
+        public void Parse(ICLIFlags toolFlags) { GetSoundbanks(toolFlags); }
 
         public void GetSoundbanks(ICLIFlags toolFlags) {
             //string basePath;
@@ -38,39 +36,39 @@ namespace DataTool.ToolLogic.Extract.Debug {
             foreach (KeyValuePair<uint,int> pair in count) {
                 Console.Out.WriteLine($"{pair.Key:X8}: {pair.Value} times");
             }*/
-            
+
             // global values
             uint[] missing = {
-                0x55745484,
-                0x2D4CB644,
-                0x7F315CD9,
-                0xC7CDBD40,
-                0x406D766F,
-                0x417F8822,
-                0x1A5EA166,
-                0x1734073C,
-                0xE46C5ADB,
-                0xB8C8210F,
-                0x488361E4,
-                0xFA05F9E5,
-                0x6712C073,
-                0x6D3825D7,
-                0xC1C9B2C9,
-                0x506AA0BD,
-                0x3C95EDA4,
-                0xFEB4C14B,
-                0xD4AEE37A,
-                0x526DE67A,
-                0x7877C44B,
-                0xE04FA033,
-                0x86517620,
-                0xC156B88E,
-                0x8395A3E4,
-                0x6A7749C5,
-                0xDD4FF96B,
-                0xB50639D8
-            };
-            
+                                 0x55745484,
+                                 0x2D4CB644,
+                                 0x7F315CD9,
+                                 0xC7CDBD40,
+                                 0x406D766F,
+                                 0x417F8822,
+                                 0x1A5EA166,
+                                 0x1734073C,
+                                 0xE46C5ADB,
+                                 0xB8C8210F,
+                                 0x488361E4,
+                                 0xFA05F9E5,
+                                 0x6712C073,
+                                 0x6D3825D7,
+                                 0xC1C9B2C9,
+                                 0x506AA0BD,
+                                 0x3C95EDA4,
+                                 0xFEB4C14B,
+                                 0xD4AEE37A,
+                                 0x526DE67A,
+                                 0x7877C44B,
+                                 0xE04FA033,
+                                 0x86517620,
+                                 0xC156B88E,
+                                 0x8395A3E4,
+                                 0x6A7749C5,
+                                 0xDD4FF96B,
+                                 0xB50639D8
+                             };
+
             /*HashSet<ulong> buffers = new HashSet<ulong>();
             foreach (var guid in Program.TrackedFiles[0x86]) {
                 teShaderInstance shaderInstance = new teShaderInstance(IO.OpenFile(guid));

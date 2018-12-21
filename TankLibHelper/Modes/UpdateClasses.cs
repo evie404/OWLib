@@ -2,8 +2,6 @@
     public class UpdateClasses : IMode {
         public string Mode => "updateclasses";
 
-        public ModeResult Run(string[] args) {
-            return ModeResult.Fail;
-        }
+        public ModeResult Run(string[] args) { return ModeResult.Fail; }
     }
 }

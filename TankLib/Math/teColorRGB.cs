@@ -6,10 +6,10 @@ namespace TankLib.Math {
     public struct teColorRGB {
         /// <summary>Red component</summary>
         public float R;
-        
+
         /// <summary>Green component</summary>
         public float G;
-        
+
         /// <summary>Blue component</summary>
         public float B;
     }

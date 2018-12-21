@@ -6,7 +6,6 @@ using DataTool.Helper;
 using DataTool.JSON;
 using TankLib;
 using TankLib.STU.Types;
-using TankLib.STU.Types.Enums;
 using static DataTool.Program;
 using static DataTool.Helper.Logger;
 using static DataTool.Helper.STUHelper;
@@ -15,7 +14,7 @@ namespace DataTool.ToolLogic.List {
     [Tool("list-maps", Description = "List maps", CustomFlags = typeof(ListFlags))]
     public class ListMaps : JSONTool, ITool {
         public void Parse(ICLIFlags toolFlags) {
-            Dictionary<teResourceGUID, MapHeader> maps = GetMaps();
+            var maps = GetMaps();
 
             if (toolFlags is ListFlags flags)
                 if (flags.JSON) {
@@ -29,10 +28,10 @@ namespace DataTool.ToolLogic.List {
 
                 Log($"{iD}{data.GetUniqueName()} ({data.MapGUID:X8})");
 
-                if (!string.IsNullOrEmpty(data.Name)) Log($"{iD+1}Name: {data.Name}");
-                if (!string.IsNullOrEmpty(data.VariantName)) Log($"{iD+1}VariantName: {data.VariantName}");
-                Log($"{iD+1}Status: {data.State}");
-                Log($"{iD+1}Type: {data.MapType}");
+                if (!string.IsNullOrEmpty(data.Name)) Log($"{iD        + 1}Name: {data.Name}");
+                if (!string.IsNullOrEmpty(data.VariantName)) Log($"{iD + 1}VariantName: {data.VariantName}");
+                Log($"{iD + 1}Status: {data.State}");
+                Log($"{iD + 1}Type: {data.MapType}");
 
                 // if (!string.IsNullOrEmpty(data.Description)) Log($"{iD+1}Desc: {data.Description}");
                 // if (!string.IsNullOrEmpty(data.DescriptionB)) Log($"{iD+1}DescB: {data.DescriptionB}");
@@ -45,14 +44,15 @@ namespace DataTool.ToolLogic.List {
                 // }
 
                 if (data.GameModes != null) {
-                    Log($"{iD+1}GameModes:");
+                    Log($"{iD + 1}GameModes:");
 
-                    foreach (teResourceGUID mode in data.GameModes) {
+                    foreach (var mode in data.GameModes) {
                         var stu = GetInstance<STUGameMode>(mode);
                         if (stu == null) continue;
-                        GameMode gameMode = new GameMode(stu);
-                        Console.Out.WriteLine($"{iD+2}{gameMode.DisplayName}");
+                        var gameMode = new GameMode(stu);
+                        Console.Out.WriteLine($"{iD + 2}{gameMode.DisplayName}");
                     }
+
                     //data.GameModes.ForEach(m => Log($"{iD+2}{m.Name}"));
                 }
 
@@ -61,17 +61,17 @@ namespace DataTool.ToolLogic.List {
         }
 
         public static MapHeader GetMap(ulong key) {
-            STUMapHeader map = GetInstance<STUMapHeader>(key);
+            var map = GetInstance<STUMapHeader>(key);
             if (map == null) return null;
 
             return new MapHeader(map);
         }
 
         public Dictionary<teResourceGUID, MapHeader> GetMaps() {
-            Dictionary<teResourceGUID, MapHeader> @return = new Dictionary<teResourceGUID, MapHeader>();
+            var @return = new Dictionary<teResourceGUID, MapHeader>();
 
             foreach (teResourceGUID key in TrackedFiles[0x9F]) {
-                MapHeader map = GetMap(key);
+                var map = GetMap(key);
                 if (map == null) continue;
                 @return[key] = map;
             }

@@ -12,33 +12,42 @@ namespace TankLib.Math {
         public float M12;
         public float M13;
         public float M14;
-        
+
         public float M21;
         public float M22;
         public float M23;
         public float M24;
-        
+
         public float M31;
         public float M32;
         public float M33;
         public float M34;
-        
-        public string DebugString => $"{M11:F3} {M12:F3} {M13:F3} {M14:F3}\r\n" +
-                                     $"{M21:F3} {M22:F3} {M23:F3} {M24:F3}\r\n" +
-                                     $"{M31:F3} {M32:F3} {M33:F3} {M34:F3}";
+
+        public string DebugString => $"{M11:F3} {M12:F3} {M13:F3} {M14:F3}\r\n" + $"{M21:F3} {M22:F3} {M23:F3} {M24:F3}\r\n" + $"{M31:F3} {M32:F3} {M33:F3} {M34:F3}";
 
         public teMtx43(Matrix matrix) {
-            M11 = matrix.M11; M12 = matrix.M12; M13 = matrix.M13; M14 = matrix.M41;
-            M21 = matrix.M21; M22 = matrix.M22; M23 = matrix.M23; M24 = matrix.M42;
-            M31 = matrix.M31; M32 = matrix.M32; M33 = matrix.M33; M34 = matrix.M43;
+            M11 = matrix.M11;
+            M12 = matrix.M12;
+            M13 = matrix.M13;
+            M14 = matrix.M41;
+            M21 = matrix.M21;
+            M22 = matrix.M22;
+            M23 = matrix.M23;
+            M24 = matrix.M42;
+            M31 = matrix.M31;
+            M32 = matrix.M32;
+            M33 = matrix.M33;
+            M34 = matrix.M43;
         }
-        
+
         public static teMtx43 Identity() {
             return new teMtx43 {
-                M11 = 1, M22 = 1, M33 = 1
-            };
+                                   M11 = 1,
+                                   M22 = 1,
+                                   M33 = 1
+                               };
         }
-        
+
         // ewwwwwwwwwww
         public float this[int rowIndex, int columnIndex] {
             get {
@@ -105,6 +114,7 @@ namespace TankLib.Math {
                             default:
                                 throw new IndexOutOfRangeException("You tried to access this matrix at: (" + rowIndex + ", " + columnIndex + ")");
                         }
+
                         break;
                     case 1:
                         switch (columnIndex) {
@@ -123,6 +133,7 @@ namespace TankLib.Math {
                             default:
                                 throw new IndexOutOfRangeException("You tried to access this matrix at: (" + rowIndex + ", " + columnIndex + ")");
                         }
+
                         break;
                     case 2:
                         switch (columnIndex) {
@@ -141,6 +152,7 @@ namespace TankLib.Math {
                             default:
                                 throw new IndexOutOfRangeException("You tried to access this matrix at: (" + rowIndex + ", " + columnIndex + ")");
                         }
+
                         break;
                     default:
                         throw new IndexOutOfRangeException("You tried to set this matrix at: (" + rowIndex + ", " + columnIndex + ")");

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using DataTool.Flag;
@@ -10,19 +11,22 @@ using TankLib.STU.Types;
 
 namespace DataTool.ToolLogic.Dbg {
     [Tool("te-model-chunk-stu", Description = "", IsSensitive = true, CustomFlags = typeof(ExtractFlags))]
-    class DebugModelSTU : ITool {
+    internal class DebugModelSTU : ITool {
         public void Parse(ICLIFlags toolFlags) {
             var flags = toolFlags as ExtractFlags;
-            var testGuids = flags?.Positionals.Skip(3).Select(x => uint.Parse(x, System.Globalization.NumberStyles.HexNumber));
+            var testGuids = flags?.Positionals.Skip(3)
+                                 .Select(x => uint.Parse(x, NumberStyles.HexNumber));
             foreach (var guid in Program.TrackedFiles[0xC]) {
                 if (!(testGuids ?? throw new InvalidDataException()).Contains(teResourceGUID.Index(guid))) continue;
-                using (Stream file = IO.OpenFile(guid))
-                using (BinaryReader reader = new BinaryReader(file)) {
-                    teChunkedData chunk = new teChunkedData(reader);
-                    teModelChunk_STU stuChunk = chunk.GetChunk<teModelChunk_STU>();
+                using (var file = IO.OpenFile(guid))
+                using (var reader = new BinaryReader(file)) {
+                    var chunk    = new teChunkedData(reader);
+                    var stuChunk = chunk.GetChunk<teModelChunk_STU>();
 
                     var hitboxes = stuChunk.StructuredData.m_CB4D298D;
-                    var complex = hitboxes.Select(x => x.m_B7C8314A).OfType<STU_B3800E70>().First();
+                    var complex = hitboxes.Select(x => x.m_B7C8314A)
+                                          .OfType<STU_B3800E70>()
+                                          .First();
                     var lines = new List<string> {
                                                      "ply",
                                                      "format ascii 1.0",

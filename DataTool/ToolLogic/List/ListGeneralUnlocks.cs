@@ -11,37 +11,34 @@ namespace DataTool.ToolLogic.List {
         public void Parse(ICLIFlags toolFlags) {
             var unlocks = GetUnlocks();
 
-            if (toolFlags is ListFlags flags) {
+            if (toolFlags is ListFlags flags)
                 if (flags.JSON) {
                     OutputJSON(unlocks, flags);
                     return;
                 }
-            }
-            
+
             ListHeroUnlocks.DisplayUnlocks("Other", unlocks.OtherUnlocks);
 
-            if (unlocks.LootBoxesUnlocks != null) {
-                foreach (LootBoxUnlocks lootBoxUnlocks in unlocks.LootBoxesUnlocks) {
-                    string boxName = LootBox.GetName(lootBoxUnlocks.LootBoxType);
-                        
+            if (unlocks.LootBoxesUnlocks != null)
+                foreach (var lootBoxUnlocks in unlocks.LootBoxesUnlocks) {
+                    var boxName = LootBox.GetName(lootBoxUnlocks.LootBoxType);
+
                     ListHeroUnlocks.DisplayUnlocks(boxName, lootBoxUnlocks.Unlocks);
                 }
-            }
 
-            if (unlocks.AdditionalUnlocks != null) {
-                foreach (AdditionalUnlocks additionalUnlocks in unlocks.AdditionalUnlocks) {
+            if (unlocks.AdditionalUnlocks != null)
+                foreach (var additionalUnlocks in unlocks.AdditionalUnlocks)
                     ListHeroUnlocks.DisplayUnlocks($"Level {additionalUnlocks.Level}", additionalUnlocks.Unlocks);
-                }
-            }
         }
 
         public PlayerProgression GetUnlocks() {
-            foreach (ulong key in TrackedFiles[0x54]) {
-                STUGenericSettings_PlayerProgression playerProgression = GetInstance<STUGenericSettings_PlayerProgression>(key);
+            foreach (var key in TrackedFiles[0x54]) {
+                var playerProgression = GetInstance<STUGenericSettings_PlayerProgression>(key);
                 if (playerProgression == null) continue;
 
                 return new PlayerProgression(playerProgression);
             }
+
             return null;
         }
     }

@@ -20,6 +20,5 @@
         MinHeight="450"
         Width="1235"
         MinWidth="1235">
-    <Grid Name="MainSource">
-    </Grid>
+    <Grid Name="MainSource" />
 </Window>

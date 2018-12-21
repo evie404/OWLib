@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,94 +15,92 @@ using static DataTool.Program;
 
 namespace DataTool.WPF.Tool.Export {
     public static class HeroUnlocksView {
-        public static Task<Control> Get(ProgressWorker a1, SynchronizationContext context, Window window, bool npc) {
+        public static Task<Control> Get(ProgressWorker         a1,
+                                        SynchronizationContext context,
+                                        Window                 window,
+                                        bool                   npc) {
             var source = new TaskCompletionSource<Control>();
 
             context.Send(obj => {
-                var control = new ImageGridView();
-                var t = new Thread(() => {
-                    if (!(obj is Tuple<ProgressWorker, TaskCompletionSource<Control>> tuple)) return;
-                    var worker = tuple.Item1;
-                    var tcs = tuple.Item2;
-                    try {
-                        var i = 0;
-                        worker.ReportProgress(0, "Loading heroes...");
-                        if (TrackedFiles == null || !TrackedFiles.ContainsKey(0x75)) {
-                            throw new DataToolWpfException("Open storage first");
-                        }
-                        
-                        var max = TrackedFiles[0x75].Count;
+                             var control = new ImageGridView();
+                             var t = new Thread(() => {
+                                                    if (!(obj is Tuple<ProgressWorker, TaskCompletionSource<Control>> tuple)) return;
+                                                    var worker = tuple.Item1;
+                                                    var tcs    = tuple.Item2;
+                                                    try {
+                                                        var i = 0;
+                                                        worker.ReportProgress(0, "Loading heroes...");
+                                                        if (TrackedFiles == null || !TrackedFiles.ContainsKey(0x75)) throw new DataToolWpfException("Open storage first");
 
-                        foreach (var key in TrackedFiles[0x75]) {
-                            try {
-                                var hero = GetInstance<STUHero>(key);
-                                if (hero == null) continue;
-                                string heroNameActual = GetString(hero.m_0EDCE350) ?? teResourceGUID.Index(key).ToString("X");
+                                                        var max = TrackedFiles[0x75]
+                                                            .Count;
 
-                                heroNameActual = heroNameActual.TrimEnd(' ');
+                                                        foreach (var key in TrackedFiles[0x75])
+                                                            try {
+                                                                var hero = GetInstance<STUHero>(key);
+                                                                if (hero == null) continue;
+                                                                var heroNameActual = GetString(hero.m_0EDCE350) ??
+                                                                                     teResourceGUID.Index(key)
+                                                                                                   .ToString("X");
 
-                                ProgressionUnlocks progressionUnlocks = new ProgressionUnlocks(hero);
-                                if (progressionUnlocks.LevelUnlocks == null && !npc) {
-                                    continue;
-                                }
-                                if (progressionUnlocks.LootBoxesUnlocks != null && npc) {
-                                    continue;
-                                }
+                                                                heroNameActual = heroNameActual.TrimEnd(' ');
 
-                                var tex = hero.m_8203BFE1.FirstOrDefault(x => teResourceGUID.Index(x.m_id) == 0x40C9 || teResourceGUID.Index(x.m_id) == 0x40CA)?.m_texture;
+                                                                var progressionUnlocks = new ProgressionUnlocks(hero);
+                                                                if (progressionUnlocks.LevelUnlocks     == null && !npc) continue;
+                                                                if (progressionUnlocks.LootBoxesUnlocks != null && npc) continue;
 
-                                if (tex == 0) {
-                                    tex = hero.m_8203BFE1.FirstOrDefault()?.m_texture;
-                                }
+                                                                var tex = hero.m_8203BFE1.FirstOrDefault(x => teResourceGUID.Index(x.m_id) == 0x40C9 || teResourceGUID.Index(x.m_id) == 0x40CA)
+                                                                              ?.m_texture;
 
-                                var image = new byte[] { };
+                                                                if (tex == 0)
+                                                                    tex = hero.m_8203BFE1.FirstOrDefault()
+                                                                              ?.m_texture;
 
-                                var width = 128;
-                                var height = 128;
-                                
-                                if (tex != 0) {
-                                    teTexture texture = new teTexture(OpenFile(tex));
-                                    if (texture.PayloadRequired) {
-                                        ulong payload = texture.GetPayloadGUID(tex);
-                                        Stream payloadStream = OpenFile(payload);
-                                        if (payloadStream != null) {
-                                            texture.LoadPayload(payloadStream);
-                                        } else {
-                                            continue;
-                                        }
-                                    }
+                                                                var image = new byte[] { };
 
-                                    width = texture.Header.Width;
-                                    height = texture.Header.Height;
+                                                                var width  = 128;
+                                                                var height = 128;
 
-                                    Stream ms = texture.SaveToDDS();
+                                                                if (tex != 0) {
+                                                                    var texture = new teTexture(OpenFile(tex));
+                                                                    if (texture.PayloadRequired) {
+                                                                        ulong payload       = texture.GetPayloadGUID(tex);
+                                                                        var   payloadStream = OpenFile(payload);
+                                                                        if (payloadStream != null)
+                                                                            texture.LoadPayload(payloadStream);
+                                                                        else
+                                                                            continue;
+                                                                    }
 
-                                    image = DDSConverter.ConvertDDS(ms, DXGI_FORMAT.R8G8B8A8_UNORM, DDSConverter.ImageFormat.PNG, 0);
-                                }
+                                                                    width  = texture.Header.Width;
+                                                                    height = texture.Header.Height;
 
-                                var entry = control.Add(heroNameActual, image, 128, (int)ImagingHelper.CalculateSizeAS(height, width, 128));
-                                entry.Payload = progressionUnlocks;
-                                entry.OnClick += (sender, args) => {
-                                    window.Close();
-                                };
-                            } catch {
-                                // ignored
-                            } finally {
-                                i += 1;
-                                worker.ReportProgress((int) (i / (float) max * 100));
-                            }
-                        }
+                                                                    var ms = texture.SaveToDDS();
 
-                        tcs.SetResult(control);
-                    } catch (Exception e) {
-                        tcs.SetException(e);
-                    } finally {
-                        worker.ReportProgress(100);
-                    }
-                });
-                t.SetApartmentState(ApartmentState.STA);
-                t.Start();
-            }, new Tuple<ProgressWorker, TaskCompletionSource<Control>>(a1, source));
+                                                                    image = DDSConverter.ConvertDDS(ms, DXGI_FORMAT.R8G8B8A8_UNORM, DDSConverter.ImageFormat.PNG, 0);
+                                                                }
+
+                                                                var entry = control.Add(heroNameActual, image, 128, (int) ImagingHelper.CalculateSizeAS(height, width, 128));
+                                                                entry.Payload =  progressionUnlocks;
+                                                                entry.OnClick += (sender, args) => { window.Close(); };
+                                                            } catch {
+                                                                // ignored
+                                                            } finally {
+                                                                i += 1;
+                                                                worker.ReportProgress((int) (i / (float) max * 100));
+                                                            }
+
+                                                        tcs.SetResult(control);
+                                                    } catch (Exception e) {
+                                                        tcs.SetException(e);
+                                                    } finally {
+                                                        worker.ReportProgress(100);
+                                                    }
+                                                });
+                             t.SetApartmentState(ApartmentState.STA);
+                             t.Start();
+                         },
+                         new Tuple<ProgressWorker, TaskCompletionSource<Control>>(a1, source));
             return source.Task;
         }
     }

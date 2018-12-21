@@ -15,49 +15,16 @@ using static DataTool.Helper.STUHelper;
 namespace DataTool.ToolLogic.Extract.Debug {
     [Tool("extract-debug-anim-nodes", Description = "Extract anim nodes (debug)", CustomFlags = typeof(ExtractFlags), IsSensitive = true)]
     public class ExtractDebugAnimNodes : JSONTool, ITool {
-        // nocaps is intentional
-        [DataContract]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
-        public class GraphRoot {
-            public List<GraphNode> nodes;
-            public List<GraphEdge> edges;
-        }
-
-        [DataContract]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public class GraphNode {
-            public float x;
-            public float y;
-            public string @class;
-            public string uuid;
-            public string name;
-        }
-        
-        [DataContract]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public class GraphEdge {
-            public string source_nodeId;
-            public string source_name;
-            public string target_nodeId;
-            public string target_name;
-            
-        }
-
-        public void Parse(ICLIFlags toolFlags) {
-            SaveAnimNodes(toolFlags);
-        }
+        public void Parse(ICLIFlags toolFlags) { SaveAnimNodes(toolFlags); }
 
         public void SaveAnimNodes(ICLIFlags toolFlags) {
-            if (!(toolFlags is ExtractFlags flags)) {
-                throw new Exception("wat");
-            }
-            string path = Path.Combine(flags.OutputPath, "DebugAnimNodes");
+            if (!(toolFlags is ExtractFlags flags)) throw new Exception("wat");
+            var path = Path.Combine(flags.OutputPath, "DebugAnimNodes");
             IO.CreateDirectorySafe(path);
 
             // I didn't want to write code for a viewer so use: https://github.com/cb109/qtnodes
-            
-            foreach (ulong key in TrackedFiles[0x20]) {
+
+            foreach (var key in TrackedFiles[0x20]) {
                 /*if (key != 1116892707587883363) continue; // 020 reaper hero select
                 STUAnimBlendTree tree = GetInstance<STUAnimBlendTree>(key);
                 GraphRoot root = new GraphRoot {nodes = new List<GraphNode>(), edges = new List<GraphEdge>()};
@@ -80,21 +47,19 @@ namespace DataTool.ToolLogic.Extract.Debug {
                     }
                 }
                 OutputJSON(root, flags);*/
-                
+
                 // notes: (all oldhash)
                 // {STU_2D84E49E} for strafe stuff
-                
+
                 // <= breakpoint here
-                GraphRoot root = new GraphRoot {nodes = new List<GraphNode>(), edges = new List<GraphEdge>()};
+                var root = new GraphRoot { nodes = new List<GraphNode>(), edges = new List<GraphEdge>() };
 
-                STUAnimBlendTree blendTree = GetInstance<STUAnimBlendTree>(key);
+                var blendTree = GetInstance<STUAnimBlendTree>(key);
                 if (blendTree.m_animNodes == null) continue;
-                foreach (STUAnimNode_Base animNode in blendTree.m_animNodes) {
-                    ParseNode(root, animNode);
-                }
+                foreach (var animNode in blendTree.m_animNodes) ParseNode(root, animNode);
 
-                byte[] json = JsonSerializer.PrettyPrintByteArray(JsonSerializer.NonGeneric.Serialize(root.GetType(), root));
-                string output = Path.Combine(path, $"{teResourceGUID.AsString(key)}.json");
+                var json   = JsonSerializer.PrettyPrintByteArray(JsonSerializer.NonGeneric.Serialize(root.GetType(), root));
+                var output = Path.Combine(path, $"{teResourceGUID.AsString(key)}.json");
                 using (Stream file = File.OpenWrite(output)) {
                     file.SetLength(0);
                     file.Write(json, 0, json.Length);
@@ -104,66 +69,85 @@ namespace DataTool.ToolLogic.Extract.Debug {
 
         public void ParseNode(GraphRoot root, STUAnimNode_Base animNode) {
             if (animNode == null) return;
-            
-            string name = $"{animNode.GetType().Name} - {animNode.m_uniqueID}";
 
-            if (animNode.m_layers != null) {
-                foreach (STUAnimNode_LayerChild layer in animNode.m_layers) {
+            var name = $"{animNode.GetType().Name} - {animNode.m_uniqueID}";
+
+            if (animNode.m_layers != null)
+                foreach (var layer in animNode.m_layers)
                     AddChild(root, layer, animNode.m_uniqueID);
-                }
-            }
 
-            if (animNode is STUAnimNode_StateMachine stateMachine) {
-                if (stateMachine.m_children != null) {
-                    foreach (STU_74173BA8 child in stateMachine.m_children) {
+            if (animNode is STUAnimNode_StateMachine stateMachine)
+                if (stateMachine.m_children != null)
+                    foreach (var child in stateMachine.m_children)
                         AddChild(root, child, animNode.m_uniqueID);
-                    }
-                }
-            }
-            if (animNode is STUAnimNode_Random unk1) {
-                if (unk1.m_children != null) {
-                    foreach (STU_597F8A0B child in unk1.m_children) {
+            if (animNode is STUAnimNode_Random unk1)
+                if (unk1.m_children != null)
+                    foreach (var child in unk1.m_children)
                         AddChild(root, child, animNode.m_uniqueID);
-                    }
-                }
-            }
-            if (animNode is STUAnimNode_Sequence unk2) {
-                if (unk2.m_children != null) {
-                    foreach (STU_F632355B child in unk2.m_children) {
+            if (animNode is STUAnimNode_Sequence unk2)
+                if (unk2.m_children != null)
+                    foreach (var child in unk2.m_children)
                         AddChild(root, child, animNode.m_uniqueID);
-                    }
-                }
-            }
-            if (animNode is STU_58C5699C unk3) {
-                if (unk3.m_child != null) {
+            if (animNode is STU_58C5699C unk3)
+                if (unk3.m_child != null)
                     AddChild(root, unk3.m_child, animNode.m_uniqueID);
-                }
-            }
-            if (animNode is STUAnimNode_BranchByCategory byCategory) {
-                if (byCategory.m_children != null) {
-                    foreach (STU_C9E2FF36 child in byCategory.m_children) {
+            if (animNode is STUAnimNode_BranchByCategory byCategory)
+                if (byCategory.m_children != null)
+                    foreach (var child in byCategory.m_children)
                         AddChild(root, child, animNode.m_uniqueID);
-                    }
-                }
-            }
 
-            if (animNode is STUAnimNode_Animation anim) {
-                if (anim.m_animation != null) {
-                    if (anim.m_animation.m_63DEDAC0 != 0) {
-                        name += $" - {anim.m_animation.m_63DEDAC0-1}";
-                    }
-                }
-            }
-            
-            root.nodes.Add(new GraphNode {x = animNode.m_pos.X, y = animNode.m_pos.Y, 
-                uuid = animNode.m_uniqueID.ToString(), @class = "MaxObject", name = name});
+            if (animNode is STUAnimNode_Animation anim)
+                if (anim.m_animation != null)
+                    if (anim.m_animation.m_63DEDAC0 != 0)
+                        name += $" - {anim.m_animation.m_63DEDAC0 - 1}";
+
+            root.nodes.Add(new GraphNode {
+                                             x      = animNode.m_pos.X,
+                                             y      = animNode.m_pos.Y,
+                                             uuid   = animNode.m_uniqueID.ToString(),
+                                             @class = "MaxObject",
+                                             name   = name
+                                         });
         }
 
         public void AddChild(GraphRoot root, STU_2F6BD485 child, uint parentId) {
             if (child.m_AF632ACD != null) {
-                uint parId = child.m_AF632ACD.m_uniqueID;
-                root.edges.Add(new GraphEdge {source_nodeId = parentId.ToString(), target_name = "parent", source_name = "children", target_nodeId = parId.ToString()});
+                var parId = child.m_AF632ACD.m_uniqueID;
+                root.edges.Add(new GraphEdge {
+                                                 source_nodeId = parentId.ToString(),
+                                                 target_name   = "parent",
+                                                 source_name   = "children",
+                                                 target_nodeId = parId.ToString()
+                                             });
             }
+        }
+
+        // nocaps is intentional
+        [DataContract]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
+        public class GraphRoot {
+            public List<GraphEdge> edges;
+            public List<GraphNode> nodes;
+        }
+
+        [DataContract]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public class GraphNode {
+            public string @class;
+            public string name;
+            public string uuid;
+            public float  x;
+            public float  y;
+        }
+
+        [DataContract]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public class GraphEdge {
+            public string source_name;
+            public string source_nodeId;
+            public string target_name;
+            public string target_nodeId;
         }
     }
 }

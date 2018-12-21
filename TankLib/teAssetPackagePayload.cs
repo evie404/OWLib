@@ -1,5 +1,3 @@
 ﻿namespace TankLib {
-    public class teAssetPackagePayload {
-        
-    }
+    public class teAssetPackagePayload { }
 }

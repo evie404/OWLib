@@ -5,36 +5,22 @@
 namespace TankLibHelper {
     // wip testing thing. might become a real thing eventually
     public class CodeWriter {
-        public CodeObj Namespace(string name) {
-            return null;
-        }
+        public CodeObj Namespace(string name) { return null; }
 
-        public CodeObj Class(string name) {
-            return null;
-        }
-        
-        public CodeObj Enum(string name) {
-            return null;
-        }
-        
-        public CodeObj EnumField(string name, object value) {
-            return null;
-        }
-        
-        public CodeObj Struct(string name) {
-            return null;
-        }
+        public CodeObj Class(string name) { return null; }
 
-        public CodeObj Field(string name, Type type) {
-            return null;
-        }
+        public CodeObj Enum(string name) { return null; }
 
-        public void Comment(string comment) {
-            
-        }
+        public CodeObj EnumField(string name, object value) { return null; }
+
+        public CodeObj Struct(string name) { return null; }
+
+        public CodeObj Field(string name, Type type) { return null; }
+
+        public void Comment(string comment) { }
 
         public static void Test() {
-            CodeWriter writer = new CodeWriter();
+            var writer = new CodeWriter();
 
             using (writer.Namespace("TankLib.STU.Types")) {
                 writer.Comment("this is bad");
@@ -45,9 +31,7 @@ namespace TankLibHelper {
                 }
 
                 using (writer.Enum("STUUnlockRarity")) {
-                    using (writer.EnumField("Legendary", 100)) {
-                        
-                    }
+                    using (writer.EnumField("Legendary", 100)) { }
                 }
             }
         }

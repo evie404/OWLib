@@ -9,23 +9,23 @@ namespace TankLib.Math {
         public float M02;
         public float M03;
         public float M04;
-        
+
         public float M05;
         public float M06;
         public float M07;
         public float M08;
-        
+
         public float M09;
         public float M10;
         public float M11;
         public float M12;
-        
+
         // A:
         public float M13;
         public float M14;
         public float M15;
         public float M16;
-        
+
         // ewwwwwwwwwww
         public float this[int rowIndex, int columnIndex] {
             get {
@@ -105,6 +105,7 @@ namespace TankLib.Math {
                             default:
                                 throw new IndexOutOfRangeException("You tried to access this matrix at: (" + rowIndex + ", " + columnIndex + ")");
                         }
+
                         break;
                     case 1:
                         switch (columnIndex) {
@@ -123,6 +124,7 @@ namespace TankLib.Math {
                             default:
                                 throw new IndexOutOfRangeException("You tried to access this matrix at: (" + rowIndex + ", " + columnIndex + ")");
                         }
+
                         break;
                     case 2:
                         switch (columnIndex) {
@@ -141,6 +143,7 @@ namespace TankLib.Math {
                             default:
                                 throw new IndexOutOfRangeException("You tried to access this matrix at: (" + rowIndex + ", " + columnIndex + ")");
                         }
+
                         break;
                     case 3:
                         switch (columnIndex) {
@@ -159,6 +162,7 @@ namespace TankLib.Math {
                             default:
                                 throw new IndexOutOfRangeException("You tried to access this matrix at: (" + rowIndex + ", " + columnIndex + ")");
                         }
+
                         break;
                     default:
                         throw new IndexOutOfRangeException("You tried to set this matrix at: (" + rowIndex + ", " + columnIndex + ")");

@@ -11,7 +11,11 @@ namespace DataTool.JSON {
             writer.WriteEndObject();
         }
 
-        public override teResourceGUID ReadJson(JsonReader reader, Type objectType, teResourceGUID existingValue, bool hasExistingValue, JsonSerializer serializer) {
+        public override teResourceGUID ReadJson(JsonReader     reader,
+                                                Type           objectType,
+                                                teResourceGUID existingValue,
+                                                bool           hasExistingValue,
+                                                JsonSerializer serializer) {
             throw new NotImplementedException();
         }
     }

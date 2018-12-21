@@ -12,7 +12,7 @@ namespace DataTool.ToolLogic.List {
     [Tool("list-keys", Description = "List resource keys", CustomFlags = typeof(ListFlags))]
     public class ListResourceKeys : JSONTool, ITool {
         public void Parse(ICLIFlags toolFlags) {
-            Dictionary<teResourceGUID, ResourceKey> keys = GetKeys();
+            var keys = GetKeys();
 
             if (toolFlags is ListFlags flags)
                 if (flags.JSON) {
@@ -20,16 +20,14 @@ namespace DataTool.ToolLogic.List {
                     return;
                 }
 
-            foreach (KeyValuePair<teResourceGUID, ResourceKey> key in keys) {
-                Log($"{key.Key}: {key.Value.KeyID} {key.Value.Value}");
-            }
+            foreach (var key in keys) Log($"{key.Key}: {key.Value.KeyID} {key.Value.Value}");
         }
 
         public Dictionary<teResourceGUID, ResourceKey> GetKeys() {
-            Dictionary<teResourceGUID, ResourceKey> @return = new Dictionary<teResourceGUID, ResourceKey>();
+            var @return = new Dictionary<teResourceGUID, ResourceKey>();
 
             foreach (teResourceGUID key in TrackedFiles[0x90]) {
-                STUResourceKey resourceKey = GetInstance<STUResourceKey>(key);
+                var resourceKey = GetInstance<STUResourceKey>(key);
                 if (resourceKey == null) continue;
                 @return[key] = new ResourceKey(resourceKey);
             }

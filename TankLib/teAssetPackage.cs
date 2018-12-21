@@ -7,17 +7,13 @@ namespace TankLib {
         public teAssetPackagePayload Payload;
 
         public teAssetPackage(Stream stream) {
-            using (BinaryReader reader = new BinaryReader(stream)) {
+            using (var reader = new BinaryReader(stream)) {
                 Read(reader);
             }
         }
 
-        public teAssetPackage(BinaryReader reader) {
-            Read(reader);
-        }
+        public teAssetPackage(BinaryReader reader) { Read(reader); }
 
-        private void Read(BinaryReader reader) {
-            throw new NotImplementedException();
-        }
+        private void Read(BinaryReader reader) { throw new NotImplementedException(); }
     }
 }
