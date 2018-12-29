@@ -90,6 +90,8 @@
     <Compile Include="Chunks\teModelChunk_STU.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="ExportFormats\IExportFormat.cs" />
+    <Compile Include="ExportFormats\Khronos\COLLADA.cs" />
+    <Compile Include="ExportFormats\Collada.cs" />
     <Compile Include="ExportFormats\OverwatchModel.cs" />
     <Compile Include="ExportFormats\SEAnim.cs" />
     <Compile Include="ExportFormats\RefPoseSkeleton.cs" />
