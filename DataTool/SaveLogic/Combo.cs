@@ -129,7 +129,7 @@ namespace DataTool.SaveLogic {
                 if (subtitleSet.Any()) {
                     if (soundSet.Count > 1) {
                         realPath = Path.Combine(realPath, GetValidFilename(subtitleSet.First().Trim().TrimEnd('.')));
-                        WriteFile(string.Join("\n", subtitleSet), Path.Combine(realPath, $"{teResourceGUID.LongKey(voiceLineInstanceInfo.Subtitle):X8}-{teResourceGUID.LongKey(voiceLineInstanceInfo.SubtitleRuntime):X8}-subtitles.txt"));
+                        WriteFile(string.Join("\n", subtitleSet), Path.Combine(realPath, $"{new teResourceGUID(voiceLineInstanceInfo.Subtitle).Key:X8}-{new teResourceGUID(voiceLineInstanceInfo.SubtitleRuntime).Key:X8}-subtitles.txt"));
                     } else if (soundSet.Count == 1) {
                         try {
                             overrideName = GetValidFilename($"{teResourceGUID.AsString(soundSet.First())}-{subtitleSet.First().TrimEnd('.')}");
@@ -213,7 +213,7 @@ namespace DataTool.SaveLogic {
             } else {
                 animStream.Position = 0;
                 string rawAnimOutput = Path.Combine(animationDirectory,
-                    $"{animationInfo.GetNameIndex()}.{teResourceGUID.Type(animationInfo.m_GUID):X3}");
+                    $"{animationInfo.GetNameIndex()}.{new teResourceGUID(animationInfo.m_GUID).Type:X3}");
                 CreateDirectoryFromFile(rawAnimOutput);
                 using (Stream fileStream = new FileStream(rawAnimOutput, FileMode.Create)) {
                     animStream.CopyTo(fileStream);
@@ -526,12 +526,12 @@ namespace DataTool.SaveLogic {
 
         private static void SaveShader(string path, FindLogic.Combo.MaterialAsset materialInfo, FindLogic.Combo.ComboInfo info) {
             string shaderDirectory = Path.Combine(path, "Shaders", $"{materialInfo.m_materialDataGUID:X16}");
-            var fn = teResourceGUID.LongKey(materialInfo.m_shaderGroupGUID).ToString("X12");
+            var fn = new teResourceGUID(materialInfo.m_shaderGroupGUID).Key.ToString("X12");
             WriteFile(materialInfo.m_shaderGroupGUID, shaderDirectory, $"{fn}.shadergroup");
             WriteFile(materialInfo.m_shaderSourceGUID, shaderDirectory, $"{fn}.shadersource"); // note to others: this isn't source code, its another shader group
             foreach (var (instance, code, byteCode) in materialInfo.m_shaders) {
                 //var instancePath = Path.Combine(shaderDirectory, $"{instance:X12}");
-                var codefn = $"{fn}{Path.DirectorySeparatorChar}{teResourceGUID.LongKey(code):X12}";
+                var codefn = $"{fn}{Path.DirectorySeparatorChar}{new teResourceGUID(code).Key:X12}";
                 WriteFile(instance, shaderDirectory, $"{codefn}.fxi");
                 WriteFile(code, shaderDirectory, $"{codefn}.owfx");
                 WriteFile(byteCode, Path.Combine(shaderDirectory, $"{codefn}.fxc"));
@@ -668,7 +668,7 @@ namespace DataTool.SaveLogic {
 
             FindLogic.Combo.TextureAsset textureInfo = info.m_info.m_textures[textureGUID];
             string filePath = Path.Combine(path, $"{textureInfo.GetNameIndex()}");
-            if (teResourceGUID.Type(textureGUID) != 0x4) filePath += $".{teResourceGUID.Type(textureGUID):X3}";
+            if (new teResourceGUID(textureGUID).Type != 0x4) filePath += $".{new teResourceGUID(textureGUID).Type:X3}";
 
             if (Program.Flags != null && Program.Flags.Deduplicate) {
                 if(ScratchDBInstance.HasRecord(textureGUID)) {

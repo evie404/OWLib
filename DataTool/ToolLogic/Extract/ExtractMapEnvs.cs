@@ -26,7 +26,7 @@ namespace DataTool.ToolLogic.Extract
         private string OCIOChunk(MapHeader info, string fname)
         {
             return $@"  - !<Look>
-    name: {GetValidFilename($"{info.GetName().ToUpperInvariant()}_{teResourceGUID.Index(info.MapGUID):X}")}
+    name: {GetValidFilename($"{info.GetName().ToUpperInvariant()}_{new teResourceGUID(info.MapGUID).Index:X}")}
     process_space: linear
     transform: !<GroupTransform>
       children:
@@ -70,9 +70,9 @@ namespace DataTool.ToolLogic.Extract
 
                 ulong dataKey = map.m_map;
 
-                //if (teResourceGUID.Index(dataKey) != 0x7A4) continue;
+                //if (new teResourceGUID(dataKey).Index != 0x7A4) continue;
 
-                var mapName = GetValidFilename($"{mapInfo.GetName()}_{teResourceGUID.Index(mapInfo.MapGUID):X}");
+                var mapName = GetValidFilename($"{mapInfo.GetName()}_{new teResourceGUID(mapInfo.MapGUID).Index:X}");
                 string fname = $"ow_map_{mapName}";
 
                 var reflectionData = Map.GetPlaceableData(map, Enums.teMAP_PLACEABLE_TYPE.REFLECTIONPOINT);

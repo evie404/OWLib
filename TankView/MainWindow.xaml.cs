@@ -380,7 +380,7 @@ namespace TankView {
                         _progressWorker?.ReportProgress(progress, $"Saving files... {progress}% ({c}/{t})");
                     }
                     
-                    var dataType = DataHelper.GetDataType(teResourceGUID.Type(entry.GUID));
+                    var dataType = DataHelper.GetDataType(new teResourceGUID(entry.GUID).Type);
                     var fileType = Path.GetExtension(entry.FullPath)?.Substring(1);
                     var filePath = Path.ChangeExtension(entry.FullPath.Substring(1), null);
                     var fileOutput = $"{filePath}.{GetFileType(dataType) ?? fileType}";

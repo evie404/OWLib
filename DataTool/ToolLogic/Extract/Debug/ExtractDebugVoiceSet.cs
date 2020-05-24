@@ -24,7 +24,7 @@ namespace DataTool.ToolLogic.Extract.Debug {
             const string container = "DebugVoiceSet";
             
             foreach (ulong key in TrackedFiles[0x5F]) {
-                if (teResourceGUID.Index(key) != 0x19F) continue;
+                if (new teResourceGUID(key).Index != 0x19F) continue;
 
                 string voiceMaterDir = Path.Combine(basePath, container, GetFileName(key));
                 

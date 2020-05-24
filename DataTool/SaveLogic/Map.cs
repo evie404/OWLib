@@ -66,7 +66,7 @@ namespace DataTool.SaveLogic {
                         // todo: wtf is this code
                         
                         teMapPlaceableEntity entity = (teMapPlaceableEntity) Entities.Placeables[i];
-                        var modelComponents = GetInstances<STUModelComponent>(entity.Header.EntityDefinition).Where(component => teResourceGUID.Index(component.m_model) > 1);
+                        var modelComponents = GetInstances<STUModelComponent>(entity.Header.EntityDefinition).Where(component => new teResourceGUID(component.m_model).Index > 1);
                         if(modelComponents.Count() == 0)
                         {
                             foreach (STUComponentInstanceData instanceData in entity.InstanceData) {
@@ -278,13 +278,13 @@ namespace DataTool.SaveLogic {
             var variantName = GetString(mapHeader.m_1C706502);
             if (variantName != null) name = variantName;
 
-            LoudLog($"Extracting map {name}\\{teResourceGUID.Index(key):X}");
+            LoudLog($"Extracting map {name}\\{new teResourceGUID(key).Index:X}");
             name = GetValidFilename(name);
             
             // TODO: MAP11 HAS CHANGED
             // TODO: MAP10 TOO?
             
-            string mapPath = Path.Combine(basePath, "Maps", name, teResourceGUID.Index(key).ToString("X")) + Path.DirectorySeparatorChar;
+            string mapPath = Path.Combine(basePath, "Maps", name, new teResourceGUID(key).Index.ToString("X")) + Path.DirectorySeparatorChar;
             
             CreateDirectoryFromFile(mapPath);
             

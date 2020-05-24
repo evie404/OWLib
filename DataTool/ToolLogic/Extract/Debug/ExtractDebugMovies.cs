@@ -48,7 +48,7 @@ namespace DataTool.ToolLogic.Extract.Debug {
                         {
                             MOVI movi = reader.Read<MOVI>();
                             videoStream.Position = 128;  // wrapped in "MOVI" for some reason
-                            string videoFile = Path.Combine(basePath, container, teResourceGUID.LongKey(key).ToString("X12"), $"{teResourceGUID.LongKey(key):X12}.bk2");
+                            string videoFile = Path.Combine(basePath, container, new teResourceGUID(key).Key.ToString("X12"), $"{new teResourceGUID(key).Key:X12}.bk2");
                             WriteFile(videoStream, videoFile);
                             FindLogic.Combo.ComboInfo audioInfo = new FindLogic.Combo.ComboInfo
                             {
@@ -58,7 +58,7 @@ namespace DataTool.ToolLogic.Extract.Debug {
                                 }
                             };
                             var audioContext = new Combo.SaveContext(audioInfo);
-                            SaveLogic.Combo.SaveSoundFile(flags, Path.Combine(basePath, container, teResourceGUID.LongKey(key).ToString("X12")), audioContext, movi.MasterAudio, false);
+                            SaveLogic.Combo.SaveSoundFile(flags, Path.Combine(basePath, container, new teResourceGUID(key).Key.ToString("X12")), audioContext, movi.MasterAudio, false);
                             audioContext.Wait();
                         }
                     }

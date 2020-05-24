@@ -30,7 +30,7 @@ namespace DataTool.ToolLogic.Extract.Debug {
             foreach (KeyValuePair<ulong,ProductHandler_Tank.Asset> asset in TankHandler.m_assets) {
                 TankHandler.UnpackAsset(asset.Value, out var package, out var record);
                 
-                ushort fileType = teResourceGUID.Type(asset.Key);
+                ushort fileType = new teResourceGUID(asset.Key).Type;
                 if (fileType == 0x9C) continue;  // bundle
                 if (fileType == 0x77) continue;  // package
                 
@@ -46,14 +46,14 @@ namespace DataTool.ToolLogic.Extract.Debug {
                 if (contentHashes.Contains(cmfData.ContentKey)) continue;
 
                 if (fileType == 0x4) {
-                    var locale = teResourceGUID.Locale(asset.Key);
+                    var locale = new teResourceGUID(asset.Key).Locale;
                     if (locale == 0xF) continue; // ? 
                     if (locale == 0x1F) continue; // ? 
                     if (locale == 0x2F) continue; // ? 
                     if (locale == 0x3F) continue; // ? 
                     if (locale == 0x4F) continue; // ? 
                     if (locale == 0x5F) continue; // ? 
-                    if (teResourceGUID.Platform(asset.Key) == 0x8) continue; // effect images
+                    if (new teResourceGUID(asset.Key).Platform == 0x8) continue; // effect images
                 }
                 
                 Combo.Find(info, asset.Key);

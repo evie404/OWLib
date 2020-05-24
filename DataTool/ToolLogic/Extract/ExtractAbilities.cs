@@ -29,7 +29,7 @@ namespace DataTool.ToolLogic.Extract {
                 STULoadout loadout = GetInstance<STULoadout>(key);
                 if (loadout == null) continue;
                 
-                string name = GetValidFilename(GetString(loadout.m_name)?.TrimEnd().Replace(".", "_")) ?? $"Unknown{teResourceGUID.Index(key):X}";
+                string name = GetValidFilename(GetString(loadout.m_name)?.TrimEnd().Replace(".", "_")) ?? $"Unknown{new teResourceGUID(key).Index:X}";
                 
                 Combo.ComboInfo info = new Combo.ComboInfo();
                 Combo.Find(info, loadout.m_texture);
@@ -41,7 +41,7 @@ namespace DataTool.ToolLogic.Extract {
                 using (Stream videoStream = OpenFile(loadout.m_infoMovie)) {
                     if (videoStream != null) {
                         videoStream.Position = 128;  // wrapped in "MOVI" for some reason
-                        WriteFile(videoStream, Path.Combine(basePath, folderName, name, $"{teResourceGUID.LongKey(loadout.m_infoMovie):X12}.bk2"));
+                        WriteFile(videoStream, Path.Combine(basePath, folderName, name, $"{new teResourceGUID(loadout.m_infoMovie).Key:X12}.bk2"));
                     }
                 }
             }

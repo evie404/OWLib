@@ -141,11 +141,11 @@ namespace TankLib.ExportFormats {
                 
                 if (stu?.StructuredData.m_hardPoints != null) {
                     foreach (STUModelHardpoint hardPoint in stu.StructuredData.m_hardPoints) {
-                        writer.Write(IdToString("hardpoint", teResourceGUID.Index(hardPoint.m_EDF0511C)));
+                        writer.Write(IdToString("hardpoint", new teResourceGUID(hardPoint.m_EDF0511C).Index));
                         
                         Matrix parentMat = Matrix.Identity;
                         if (hardPoint.m_FF592924 != 0 && skeleton != null) {
-                            int boneIdx = skeleton.IDs.TakeWhile(id => id != teResourceGUID.Index(hardPoint.m_FF592924))
+                            int boneIdx = skeleton.IDs.TakeWhile(id => id != new teResourceGUID(hardPoint.m_FF592924).Index)
                                 .Count();
 
                             parentMat = skeleton.GetWorldSpace(boneIdx);
@@ -162,7 +162,7 @@ namespace TankLib.ExportFormats {
                     }
 
                     foreach (STUModelHardpoint modelHardpoint in stu.StructuredData.m_hardPoints) {
-                        writer.Write(IdToString("bone", teResourceGUID.Index(modelHardpoint.m_FF592924)));
+                        writer.Write(IdToString("bone", new teResourceGUID(modelHardpoint.m_FF592924).Index));
                     }
                 }
                 
@@ -186,7 +186,7 @@ namespace TankLib.ExportFormats {
                     }
                 }
                 
-                writer.Write(teResourceGUID.Index(GUID));
+                writer.Write(new teResourceGUID(GUID).Index);
             }
         }
 

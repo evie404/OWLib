@@ -19,7 +19,7 @@ namespace DataTool.SaveLogic {
                     writer.Write(0f);
                 }
                 if (playbackInfo.Hardpoint != 0) {
-                    writer.Write(OverwatchModel.IdToString("hardpoint", teResourceGUID.Index(playbackInfo.Hardpoint)));
+                    writer.Write(OverwatchModel.IdToString("hardpoint", new teResourceGUID(playbackInfo.Hardpoint).Index));
                 } else {
                     writer.Write("null");
                 }
@@ -52,7 +52,7 @@ namespace DataTool.SaveLogic {
 
                 EffectParser.EffectInfo effect = EffectInfo.Effect;
                 
-                writer.Write(teResourceGUID.Index(effect.GUID));
+                writer.Write(new teResourceGUID(effect.GUID).Index);
                 writer.Write(effect.EffectLength);
                 
                 writer.Write(effect.DMCEs.Count);
@@ -83,7 +83,7 @@ namespace DataTool.SaveLogic {
                     writer.Write((byte)ceceInfo.Action);
                     writer.Write(ceceInfo.Animation);
                     writer.Write(ceceInfo.Identifier);
-                    writer.Write(teResourceGUID.Index(ceceInfo.Identifier));
+                    writer.Write(new teResourceGUID(ceceInfo.Identifier).Index);
                     if (ceceInfo.Animation != 0) {
                         FindLogic.Combo.AnimationAsset animationInfo = Info.m_animations[ceceInfo.Animation];
                         writer.Write($"{OverwatchAnimationEffect.AnimationEffectDir}\\{animationInfo.GetNameIndex()}\\{animationInfo.GetNameIndex()}.owanim");
@@ -95,7 +95,7 @@ namespace DataTool.SaveLogic {
                 foreach (EffectParser.NECEInfo neceInfo in effect.NECEs) {
                     WriteTime(writer, neceInfo.PlaybackInfo);
                     writer.Write(neceInfo.GUID);
-                    writer.Write(teResourceGUID.Index(neceInfo.Identifier));
+                    writer.Write(new teResourceGUID(neceInfo.Identifier).Index);
                     FindLogic.Combo.EntityAsset entityInfo = Info.m_entities[neceInfo.GUID];
                     
                     writer.Write($"Entities\\{entityInfo.GetName()}\\{entityInfo.GetName()}.owentity");
@@ -114,7 +114,7 @@ namespace DataTool.SaveLogic {
 
                 foreach (EffectParser.SVCEInfo svceInfo in effect.SVCEs) {
                     WriteTime(writer, svceInfo.PlaybackInfo);
-                    writer.Write(teResourceGUID.Index(svceInfo.VoiceStimulus));
+                    writer.Write(new teResourceGUID(svceInfo.VoiceStimulus).Index);
                     if (VoiceStimuli.ContainsKey(svceInfo.VoiceStimulus)) {
                         HashSet<FindLogic.Combo.VoiceLineInstanceInfo> lines = VoiceStimuli[svceInfo.VoiceStimulus];
                         writer.Write(lines.Count);
@@ -167,7 +167,7 @@ namespace DataTool.SaveLogic {
                     writer.Write(Extension);
                     writer.Write(AnimVersionMajor);
                     writer.Write(AnimVersionMinor);
-                    writer.Write(teResourceGUID.Index(Animation.m_GUID));
+                    writer.Write(new teResourceGUID(Animation.m_GUID).Index);
                     writer.Write(Animation.m_fps);
                     writer.Write((int)OWAnimType.Data);
                     
@@ -200,7 +200,7 @@ namespace DataTool.SaveLogic {
                     writer.Write(Extension); // identifier
                     writer.Write(OverwatchAnimationEffect.AnimVersionMajor);
                     writer.Write(OverwatchAnimationEffect.AnimVersionMinor);
-                    writer.Write(teResourceGUID.Index(Animation.m_GUID));
+                    writer.Write(new teResourceGUID(Animation.m_GUID).Index);
                     writer.Write(Animation.m_fps);
                     writer.Write((int)OverwatchAnimationEffect.OWAnimType.Reference);
 

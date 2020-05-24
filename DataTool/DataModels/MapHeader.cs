@@ -82,7 +82,7 @@ namespace DataTool.DataModels {
 
         public string GetUniqueName() {
             string name = GetName();
-            return $"{name}:{teResourceGUID.Index(MapGUID):X}";
+            return $"{name}:{MapGUID.Index:X}";
         }
     }
 

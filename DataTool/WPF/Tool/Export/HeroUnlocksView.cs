@@ -38,7 +38,7 @@ namespace DataTool.WPF.Tool.Export {
                             try {
                                 var hero = GetInstance<STUHero>(key);
                                 if (hero == null) continue;
-                                string heroNameActual = GetString(hero.m_0EDCE350) ?? teResourceGUID.Index(key).ToString("X");
+                                string heroNameActual = GetString(hero.m_0EDCE350) ?? new teResourceGUID(key).Index.ToString("X");
 
                                 heroNameActual = heroNameActual.TrimEnd(' ');
 
@@ -50,7 +50,7 @@ namespace DataTool.WPF.Tool.Export {
                                     continue;
                                 }
 
-                                var tex = hero.m_8203BFE1.FirstOrDefault(x => teResourceGUID.Index(x.m_id) == 0x40C9 || teResourceGUID.Index(x.m_id) == 0x40CA)?.m_texture;
+                                var tex = hero.m_8203BFE1.FirstOrDefault(x => new teResourceGUID(x.m_id).Index == 0x40C9 || new teResourceGUID(x.m_id).Index == 0x40CA)?.m_texture;
 
                                 if (tex == 0) {
                                     tex = hero.m_8203BFE1.FirstOrDefault()?.m_texture;

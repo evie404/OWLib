@@ -247,7 +247,7 @@ namespace TankView.ViewModel {
                             worker?.ReportProgress((int) (((float) c / (float) total) * 100));
                         }
 
-                        ushort typeVal = teResourceGUID.Type(record.GUID);
+                        ushort typeVal = new teResourceGUID(record.GUID).Type;
                         string typeStr = typeVal.ToString("X3");
                         DataHelper.DataType typeData = DataHelper.GetDataType(typeVal);
                         if (typeData != DataHelper.DataType.Unknown) {

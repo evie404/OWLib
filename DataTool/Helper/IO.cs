@@ -61,8 +61,8 @@ namespace DataTool.Helper {
         }
 
         public static string GetNullableGUIDName(ulong guid) {
-            var index = teResourceGUID.LongKey(guid);
-            var type = teResourceGUID.Type(guid);
+            var index = new teResourceGUID(guid).Key;
+            var type = new teResourceGUID(guid).Type;
             return GUIDTable.TryGetValue((index, type), out var name) ? name : null;
         }
 

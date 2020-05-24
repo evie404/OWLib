@@ -71,7 +71,7 @@ namespace DataTool.ToolLogic.Extract
                 STUHero hero = GetInstance<STUHero>(heroFile);
                 if (hero == null) continue;
 
-                string heroNameActual = (GetString(hero.m_0EDCE350) ?? $"Unknown{teResourceGUID.Index(heroFile)}").TrimEnd(' ');
+                string heroNameActual = (GetString(hero.m_0EDCE350) ?? $"Unknown{new teResourceGUID(heroFile).Index}").TrimEnd(' ');
 
 
                 Dictionary<string, ParsedArg> config = GetQuery(parsedTypes, heroNameActual.ToLowerInvariant(), "*");

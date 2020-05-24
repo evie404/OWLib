@@ -405,7 +405,7 @@ namespace DataTool.FindLogic {
             //if (GetFileName(guid) == "000000001B4E.003") Debugger.Break();  // black forest (winter) middle cog
             //if (GetFileName(guid) == "000000001BDB.003") Debugger.Break();  // black forest (winter) capture point
             
-            ushort guidType = teResourceGUID.Type(guid);
+            ushort guidType = new teResourceGUID(guid).Type;
             if (guidType == 0 || guidType == 1) return info;
             switch (guidType) {
                 /*case 0x2: {

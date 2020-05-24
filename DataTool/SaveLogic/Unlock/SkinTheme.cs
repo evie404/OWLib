@@ -76,7 +76,7 @@ namespace DataTool.SaveLogic.Unlock {
                 var diffInfoAfterContext = new Combo.SaveContext(diffInfoAfter); // todo: remove
                 
                 foreach (KeyValuePair<ulong,ulong> replacement in replacements) {
-                    uint diffReplacementType = teResourceGUID.Type(replacement.Value);
+                    uint diffReplacementType = new teResourceGUID(replacement.Value).Type;
                     if (diffReplacementType != 0x2C && diffReplacementType != 0x3F &&
                         diffReplacementType != 0xB2) continue; // no voice sets, use extract-hero-voice
                     FindLogic.Combo.Find(diffInfoAfter, replacement.Value);
@@ -114,7 +114,7 @@ namespace DataTool.SaveLogic.Unlock {
                 if (weaponEntity.m_loadout == 0) continue;
                 Loadout loadout = Loadout.GetLoadout(weaponEntity.m_loadout);
                 if (loadout == null) continue;
-                info.SetEntityName(weaponEntity.m_entityDefinition, $"{loadout.Name}-{teResourceGUID.Index(weaponEntity.m_entityDefinition)}");
+                info.SetEntityName(weaponEntity.m_entityDefinition, $"{loadout.Name}-{new teResourceGUID(weaponEntity.m_entityDefinition).Index}");
             }
         }
 

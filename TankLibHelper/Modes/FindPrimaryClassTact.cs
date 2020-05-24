@@ -29,7 +29,7 @@ namespace TankLibHelper.Modes {
             TankLib.TACT.LoadHelper.PostLoad(client);
 
             foreach (var asset in handler.m_assets) {
-                if (!types.Contains(teResourceGUID.Type(asset.Key))) continue;
+                if (!types.Contains(new teResourceGUID(asset.Key).Type)) continue;
                 string filename = teResourceGUID.AsString(asset.Key);
                 using (Stream stream = handler.OpenFile(asset.Key)) {
                     try {

@@ -174,7 +174,7 @@ namespace DataTool.ToolLogic.Extract {
                 return EventConfig;
             }
 
-            using (var stu = OpenSTUSafe(TrackedFiles[0x54].First(x => teResourceGUID.Index(x) == 0x16C))) {
+            using (var stu = OpenSTUSafe(TrackedFiles[0x54].First(x => new teResourceGUID(x).Index == 0x16C))) {
                 var map = stu.GetInstance<STU_D7BD8322>();
                 EventConfig = map.m_categories.ToDictionary(x => x.m_id.GUID, y => GetString(y.m_name));
                 return EventConfig;
@@ -196,7 +196,7 @@ namespace DataTool.ToolLogic.Extract {
 
                 if (heroNameActual == null) continue;
                 
-                Dictionary<string, ParsedArg> config = GetQuery(parsedTypes, heroNameActual.ToLowerInvariant(), "*", teResourceGUID.Index(heroPair.Key).ToString("X"));
+                Dictionary<string, ParsedArg> config = GetQuery(parsedTypes, heroNameActual.ToLowerInvariant(), "*", new teResourceGUID(heroPair.Key).Index.ToString("X"));
                 
                 string heroFileName = GetValidFilename(heroNameActual);
                 

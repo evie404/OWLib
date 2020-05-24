@@ -80,14 +80,14 @@ namespace DataTool.ToolLogic.Util {
 
                 var doGuidName = nameOccurrances[heroNameActual] > 1;
                 if (doGuidName) {
-                    heroNameActual += $" ({teResourceGUID.Index(heroGUID):X})";
+                    heroNameActual += $" ({new teResourceGUID(heroGUID).Index:X})";
                 }
                 
                 ProgressionUnlocks progressionUnlocks = new ProgressionUnlocks(hero);
 
                 var choice = new DynamicChoice {
                     DisplayName = heroNameActual,
-                    QueryName = $"{teResourceGUID.Index(heroGUID):X}"
+                    QueryName = $"{new teResourceGUID(heroGUID).Index:X}"
                 };
 
                 if (progressionUnlocks.LevelUnlocks == null) {
@@ -134,11 +134,11 @@ namespace DataTool.ToolLogic.Util {
                 MapHeader map = ListMaps.GetMap(key);
                 if (map == null) continue;
 
-                var name = map.VariantName ?? map.Name ?? $"Title Screen ({teResourceGUID.Index(key):X})";
+                var name = map.VariantName ?? map.Name ?? $"Title Screen ({new teResourceGUID(key).Index:X})";
                 
                 mapContainer.Choices.Add(new DynamicChoice {
                     DisplayName = name,
-                    QueryName = teResourceGUID.Index(map.MapGUID).ToString("X")
+                    QueryName = new teResourceGUID(map.MapGUID).Index.ToString("X")
                 });
             }
         }

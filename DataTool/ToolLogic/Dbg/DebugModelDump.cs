@@ -18,8 +18,8 @@ namespace DataTool.ToolLogic.Dbg
             teChunkedData.Manager.ChunkTypes.Clear();
             foreach (var guid in Program.TrackedFiles[0xC])
             {
-                if (!(testGuids ?? throw new InvalidDataException()).Contains(teResourceGUID.Index(guid))) continue;
-                var path = Path.Combine(flags.OutputPath, "teModelChunk", teResourceGUID.Index(guid).ToString("X"));
+                if (!(testGuids ?? throw new InvalidDataException()).Contains(new teResourceGUID(guid).Index)) continue;
+                var path = Path.Combine(flags.OutputPath, "teModelChunk", new teResourceGUID(guid).Index.ToString("X"));
                 if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
                 }

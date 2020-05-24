@@ -28,7 +28,7 @@ namespace DataTool.ToolLogic.Dump {
         public Dictionary<teResourceGUID, UXDisplayText> GetStrings() {
             var strings = new Dictionary<teResourceGUID, UXDisplayText>();
 
-            foreach (teResourceGUID guid in TrackedFiles[0x7C].OrderBy(teResourceGUID.Index)) {
+            foreach (teResourceGUID guid in TrackedFiles[0x7C].OrderBy(x => x.Index)) {
                 UXDisplayText displayText = new UXDisplayText(guid);
                 if (displayText.Value == null) continue;
                 strings[guid] = displayText;

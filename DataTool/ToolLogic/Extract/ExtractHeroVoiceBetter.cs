@@ -28,7 +28,7 @@ namespace DataTool.ToolLogic.Extract {
                 var progression = new ProgressionUnlocks(hero);
                 if (progression.LootBoxesUnlocks == null) continue; // no NPCs thanks
                 
-                string heroNameActual = GetValidFilename((GetString(hero.m_0EDCE350) ?? $"Unknown{teResourceGUID.Index(key)}").TrimEnd(' '));
+                string heroNameActual = GetValidFilename((GetString(hero.m_0EDCE350) ?? $"Unknown{new teResourceGUID(key).Index}").TrimEnd(' '));
                 var voiceSetComponent = GetInstance<STUVoiceSetComponent>(hero.m_gameplayEntity);
                 if (voiceSetComponent?.m_voiceDefinition == null) continue;
 

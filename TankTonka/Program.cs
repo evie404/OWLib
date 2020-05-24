@@ -45,7 +45,7 @@ namespace TankTonka {
             });
 
             if (types == null) {
-                foreach (KeyValuePair<ushort, HashSet<ulong>> type in DataTool.Program.TrackedFiles) {
+                foreach (KeyValuePair<ushort, HashSet<teResourceGUID>> type in DataTool.Program.TrackedFiles) {
                     ProcessType(type.Key);
                 }
             } else {
@@ -226,7 +226,7 @@ namespace TankTonka {
 
             if (!(value is ulong @ulong)) return;
             if (@ulong == 0) return;
-            ushort type = teResourceGUID.Type(@ulong);
+            ushort type = new teResourceGUID(@ulong).Type;
             if (type > 1 && type < 0xFF) {
                 record.References.Add((teResourceGUID) @ulong);
             }

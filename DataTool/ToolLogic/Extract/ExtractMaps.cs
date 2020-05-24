@@ -54,7 +54,7 @@ namespace DataTool.ToolLogic.Extract {
                 mapInfo.Name = mapInfo.Name ?? "Title Screen";
 
                 Dictionary<string, ParsedArg> config = GetQuery(parsedTypes, mapInfo.Name, mapInfo.VariantName,
-                    mapInfo.GetUniqueName(), mapInfo.GetName(), teResourceGUID.Index(map.m_map).ToString("X"), "*");
+                    mapInfo.GetUniqueName(), mapInfo.GetName(), new teResourceGUID(map.m_map).Index.ToString("X"), "*");
                 
                 if (config.Count == 0) continue;
                 

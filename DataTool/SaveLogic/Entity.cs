@@ -34,9 +34,9 @@ namespace DataTool.SaveLogic {
                         FindLogic.Combo.EffectInfoCombo effectInfo = Info.m_effects[Entity.m_effectGUID];
                         writer.Write(effectInfo.GetName());
                     } else {writer.Write("null");}
-                    writer.Write(teResourceGUID.Index(Entity.m_GUID));
-                    writer.Write(teResourceGUID.Index(Entity.m_modelGUID));
-                    writer.Write(teResourceGUID.Index(Entity.m_effectGUID));
+                    writer.Write(new teResourceGUID(Entity.m_GUID).Index);
+                    writer.Write(new teResourceGUID(Entity.m_modelGUID).Index);
+                    writer.Write(new teResourceGUID(Entity.m_effectGUID).Index);
 
                     if (Entity.Children == null) {
                         writer.Write(0);
@@ -49,10 +49,10 @@ namespace DataTool.SaveLogic {
                         writer.Write(childEntityInfo.GetName());
                         writer.Write(childEntityReference.m_hardpointGUID);
                         writer.Write(childEntityReference.m_identifier);
-                        writer.Write(teResourceGUID.Index(childEntityReference.m_hardpointGUID));
-                        writer.Write(teResourceGUID.Index(childEntityReference.m_identifier));
+                        writer.Write(new teResourceGUID(childEntityReference.m_hardpointGUID).Index);
+                        writer.Write(new teResourceGUID(childEntityReference.m_identifier).Index);
                         if (childEntityReference.m_hardpointGUID != 0) {
-                            writer.Write(OverwatchModel.IdToString("hardpoint", teResourceGUID.Index(childEntityReference.m_hardpointGUID)));
+                            writer.Write(OverwatchModel.IdToString("hardpoint", new teResourceGUID(childEntityReference.m_hardpointGUID).Index));
                         } else {
                             writer.Write("null"); // erm, k
                         }

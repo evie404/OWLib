@@ -77,7 +77,7 @@ namespace DataTool.ToolLogic.Extract {
             //     STUMapHeader mapHeader = GetInstance<STUMapHeader>(mapGuid);
             //     if (mapHeader == null) continue;
             //
-            //     mapNames[teResourceGUID.Index(mapGuid)] = GetValidFilename(GetString(mapHeader.m_1C706502) ?? GetString(mapHeader.m_displayName));
+            //     mapNames[new teResourceGUID(mapGuid)] = GetValidFilename(GetString(mapHeader.m_1C706502) ?? GetString(mapHeader.m_displayName));
             // }
 
             Combo.ComboInfo comboInfo = new Combo.ComboInfo();
@@ -95,9 +95,9 @@ namespace DataTool.ToolLogic.Extract {
                 }
 
                 string heroNameActual =
-                    (GetString(hero.m_0EDCE350) ?? $"Unknown{teResourceGUID.Index(heroGuid)}").TrimEnd(' ');
+                    (GetString(hero.m_0EDCE350) ?? $"Unknown{new teResourceGUID(heroGuid).Index}").TrimEnd(' ');
 
-                Dictionary<string, ParsedArg> config = GetQuery(parsedTypes, heroNameActual.ToLowerInvariant(), "*", teResourceGUID.Index(heroGuid).ToString("X"));
+                Dictionary<string, ParsedArg> config = GetQuery(parsedTypes, heroNameActual.ToLowerInvariant(), "*", new teResourceGUID(heroGuid).Index.ToString("X"));
 
                 if (config.Count == 0) continue;
                 Log($"Processing data for {heroNameActual}");
@@ -151,7 +151,7 @@ namespace DataTool.ToolLogic.Extract {
             }
             
             if (cond is STU_E9DB72FF mapCond) {
-                VoiceLine.SaveVoiceLine(flags, lineInstance, Path.Combine(path, heroNameActual, "Maps", mapNames[teResourceGUID.Index(mapCond.m_map)]), comboInfo);
+                VoiceLine.SaveVoiceLine(flags, lineInstance, Path.Combine(path, heroNameActual, "Maps", mapNames[new teResourceGUID(mapCond.m_map)]), comboInfo);
             }
 
             if (cond is STU_C37857A5 celebrationCond) {

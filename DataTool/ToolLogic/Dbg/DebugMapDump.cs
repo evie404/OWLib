@@ -20,9 +20,9 @@ namespace DataTool.ToolLogic.Debug
             var testguids = flags.Positionals.Skip(3).Select(x => uint.Parse(x, System.Globalization.NumberStyles.HexNumber));
             foreach (var guid in Program.TrackedFiles[0x9F])
             {
-                if(testguids.Contains(teResourceGUID.Index(guid)))
+                if(testguids.Contains(new teResourceGUID(guid).Index))
                 {
-                    var path = Path.Combine(flags.OutputPath, "teMapPlacable", teResourceGUID.Index(guid).ToString("X"));
+                    var path = Path.Combine(flags.OutputPath, "teMapPlacable", new teResourceGUID(guid).Index.ToString("X"));
                     STUMapHeader map = GetInstance<STUMapHeader>(guid);
 
                     foreach(var t in Enum.GetValues(typeof(Enums.teMAP_PLACEABLE_TYPE)))

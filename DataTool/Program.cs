@@ -24,7 +24,7 @@ namespace DataTool {
     public static class Program {
         public static ClientHandler                      Client;
         public static ProductHandler_Tank                TankHandler;
-        public static Dictionary<ushort, HashSet<ulong>> TrackedFiles;
+        public static Dictionary<ushort, HashSet<teResourceGUID>> TrackedFiles;
 
         public static ToolFlags Flags;
         public static uint      BuildVersion;
@@ -238,15 +238,15 @@ namespace DataTool {
         }
 
         public static void InitTrackedFiles() {
-            TrackedFiles = new Dictionary<ushort, HashSet<ulong>>();
+            TrackedFiles = new Dictionary<ushort, HashSet<teResourceGUID>>();
             foreach (var asset in TankHandler.m_assets) {
-                var type = teResourceGUID.Type(asset.Key);
+                var type = new teResourceGUID(asset.Key).Type;
                 if (!TrackedFiles.TryGetValue(type, out var typeMap)) {
-                    typeMap            = new HashSet<ulong>();
+                    typeMap            = new HashSet<teResourceGUID>();
                     TrackedFiles[type] = typeMap;
                 }
 
-                typeMap.Add(asset.Key);
+                typeMap.Add(new teResourceGUID(asset.Key));
             }
         }
 

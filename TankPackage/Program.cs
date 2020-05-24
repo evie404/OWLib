@@ -67,13 +67,13 @@ namespace TankPackage
 
         private static void Types(string[] args)
         {
-            IOrderedEnumerable<ulong> unique = new HashSet<ulong>(TankHandler.m_assets.Keys.Select(x => teResourceGUID.Attribute(x, teResourceGUID.AttributeEnum.Type))).OrderBy(x => x >> 48);
+            IOrderedEnumerable<teResourceGUID> unique = new HashSet<teResourceGUID>(TankHandler.m_assets.Keys.Select(x => new teResourceGUID(x))).OrderBy(x => x.GetAttribute(teResourceGUID.teResourceGUIDAttribute.Type) >> 48);
 
-            foreach (ulong key in unique)
+            foreach (teResourceGUID key in unique)
             {
                 ushort sh = (ushort)(key >> 48);
                 ushort shBE = (ushort)(((sh & 0xFF) << 8) | sh >> 8);
-                Console.Out.WriteLine($"{shBE:X4} : {sh:X4} : {teResourceGUID.Type(key):X3}");
+                Console.Out.WriteLine($"{shBE:X4} : {sh:X4} : {key.Type:X3}");
             }
         }
 
@@ -88,7 +88,7 @@ namespace TankPackage
 
             ApplicationPackageManifest apm = TankHandler.m_packageManifest;
             foreach (ContentManifestFile contentManifest in new [] {TankHandler.m_textContentManifest, TankHandler.m_speechContentManifest}) {
-                var ids = contentManifest.m_indexMap.Where(x => guids.Length == 0 || guids.Contains(teResourceGUID.Type(x.Key))).Select(x => x.Key);
+                var ids = contentManifest.m_indexMap.Where(x => guids.Length == 0 || guids.Contains(new teResourceGUID(x.Key).Type)).Select(x => x.Key);
                 Save(output, apm.m_header.m_checksum, ids, contentManifest);
             }
         }
@@ -110,7 +110,7 @@ namespace TankPackage
             for (int i = 0; i < apm.m_packageEntries.Length; ++i)
             {
                 PackageEntry entry = apm.m_packageEntries[i];
-                if (guids.Contains(teResourceGUID.LongKey(entry.m_packageGUID)) || guids.Contains(teResourceGUID.Index(entry.m_packageGUID)))
+                if (guids.Contains(new teResourceGUID(entry.m_packageGUID).Key) || guids.Contains(new teResourceGUID(entry.m_packageGUID).Index))
                 {
                     packages[entry.m_packageGUID] = apm.m_packages[i];
                     records[entry.m_packageGUID] = apm.m_packageRecords[i];
@@ -140,7 +140,7 @@ namespace TankPackage
             for (int i = 0; i < apm.m_packageEntries.Length; ++i)
             {
                 PackageEntry entry = apm.m_packageEntries[i];
-                if (!guids.Contains(teResourceGUID.LongKey(entry.m_packageGUID)) && !guids.Contains(teResourceGUID.Index(entry.m_packageGUID)) && !guids.Contains(entry.m_packageGUID)) continue;
+                if (!guids.Contains(new teResourceGUID(entry.m_packageGUID).Key) && !guids.Contains(new teResourceGUID(entry.m_packageGUID).Index) && !guids.Contains(entry.m_packageGUID)) continue;
                 packages[entry.m_packageGUID] = apm.m_packages[i];
                 records[entry.m_packageGUID] = apm.m_packageRecords[i];
             }
@@ -174,7 +174,7 @@ namespace TankPackage
 
             void Body(PackageRecord record) {
                 using (Stream file = OpenFile(record.m_GUID)) {
-                    string tmp = Path.Combine(dest, $"{teResourceGUID.Type(record.m_GUID):X3}");
+                    string tmp = Path.Combine(dest, $"{new teResourceGUID(record.m_GUID).Type:X3}");
                     if (!Directory.Exists(tmp)) {
                         Directory.CreateDirectory(tmp);
                     }
@@ -193,7 +193,7 @@ namespace TankPackage
 
             void Body(ulong guid) {
                 using (Stream file = cmf.OpenFile(Client, guid)) {
-                    string tmp = Path.Combine(dest, $"{teResourceGUID.Type(guid):X3}");
+                    string tmp = Path.Combine(dest, $"{new teResourceGUID(guid).Type:X3}");
                     if (!Directory.Exists(tmp)) {
                         Directory.CreateDirectory(tmp);
                     }
@@ -217,9 +217,9 @@ namespace TankPackage
                 PackageEntry entry = apm.m_packageEntries[i];
                 PackageRecord[] records = apm.m_packageRecords[i];
 
-                foreach (PackageRecord record in records.Where(x => guids.Contains(x.m_GUID) || guids.Contains(teResourceGUID.Type(x.m_GUID)) || guids.Contains(teResourceGUID.Index(x.m_GUID)) || guids.Contains(teResourceGUID.LongKey(x.m_GUID))))
+                foreach (PackageRecord record in records.Where(x => guids.Contains(x.m_GUID) || guids.Contains(new teResourceGUID(x.m_GUID).Type) || guids.Contains(new teResourceGUID(x.m_GUID).Index) || guids.Contains(new teResourceGUID(x.m_GUID).Key)))
                 {
-                    Log("Found {0} in package {1:X12}", teResourceGUID.AsString(record.m_GUID), teResourceGUID.LongKey(entry.m_packageGUID));
+                    Log("Found {0} in package {1:X12}", teResourceGUID.AsString(record.m_GUID), new teResourceGUID(entry.m_packageGUID).Key);
                 }
             }
         }
@@ -234,9 +234,9 @@ namespace TankPackage
                 PackageEntry entry = apm.m_packageEntries[i];
                 PackageRecord[] records = apm.m_packageRecords[i];
 
-                foreach (PackageRecord record in records.Where(x => guids.Contains(teResourceGUID.Type(x.m_GUID))))
+                foreach (PackageRecord record in records.Where(x => guids.Contains(new teResourceGUID(x.m_GUID).Type)))
                 {
-                    Log("Found {0} in package {1:X12}", teResourceGUID.AsString(record.m_GUID), teResourceGUID.LongKey(entry.m_packageGUID));
+                    Log("Found {0} in package {1:X12}", teResourceGUID.AsString(record.m_GUID), new teResourceGUID(entry.m_packageGUID).Type);
                 }
             }
         }
@@ -249,8 +249,8 @@ namespace TankPackage
             for (int i = 0; i < apm.m_packageEntries.Length; ++i)
             {
                 PackageEntry entry = apm.m_packageEntries[i];
-                if (!guids.Contains(teResourceGUID.LongKey(entry.m_packageGUID)) && !guids.Contains(teResourceGUID.Index(entry.m_packageGUID))) continue;
-                Log("Package {0:X12}:", teResourceGUID.LongKey(entry.m_packageGUID));
+                if (!guids.Contains(new teResourceGUID(entry.m_packageGUID).Key) && !guids.Contains(new teResourceGUID(entry.m_packageGUID).Index)) continue;
+                Log("Package {0:X12}:", new teResourceGUID(entry.m_packageGUID).Key);
                 Log("\tUnknowns: {0}, {1}", entry.m_unknown1, entry.m_unknown2);
                 Log("\t{0} records", apm.m_packageRecords[i].Length);
             }

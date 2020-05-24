@@ -34,7 +34,7 @@ namespace DataTool.ToolLogic.Extract.Debug {
                     //inst = structuredData.GetMainInstance<STU_598579A3>();
                 }
 
-                string name = $"{GetString(inst.m_name)}_{teResourceGUID.Index(key):X}";
+                string name = $"{GetString(inst.m_name)}_{new teResourceGUID(key).Index:X}";
                 string description = GetString(inst.m_description);
                 
                 Combo.ComboInfo info = new Combo.ComboInfo();

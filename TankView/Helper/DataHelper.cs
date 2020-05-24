@@ -27,7 +27,7 @@ namespace TankView.Helper {
                 return DataType.Unknown;
             }
 
-            ushort type = teResourceGUID.Type(value.GUID);
+            ushort type = new teResourceGUID(value.GUID).Type;
             return GetDataType(type);
         }
 
@@ -105,7 +105,7 @@ namespace TankView.Helper {
         }
 
         internal static object GetString(GUIDEntry value) {
-            if (teResourceGUID.Type(value.GUID) == 0x071) {
+            if (new teResourceGUID(value.GUID).Type == 0x071) {
                 return GetSubtitle(value);
             }
 

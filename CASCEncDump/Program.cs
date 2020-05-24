@@ -134,7 +134,7 @@ namespace CASCEncDump {
             
             Directory.CreateDirectory(AllCMFDir);
             foreach (KeyValuePair<ulong, ProductHandler_Tank.Asset> asset in TankHandler.m_assets) {
-                ushort type = teResourceGUID.Type(asset.Key);
+                ushort type = new teResourceGUID(asset.Key).Type;
                 if (!types.Contains(type)) continue;
                 try {
                     using (Stream stream = TankHandler.OpenFile(asset.Key)) {

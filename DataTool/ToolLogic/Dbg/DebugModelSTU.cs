@@ -15,7 +15,7 @@ namespace DataTool.ToolLogic.Dbg {
             var flags = toolFlags as ExtractFlags;
             var testGuids = flags?.Positionals.Skip(3).Select(x => uint.Parse(x, System.Globalization.NumberStyles.HexNumber));
             foreach (var guid in Program.TrackedFiles[0xC]) {
-                if (!(testGuids ?? throw new InvalidDataException()).Contains(teResourceGUID.Index(guid))) continue;
+                if (!(testGuids ?? throw new InvalidDataException()).Contains(new teResourceGUID(guid).Index)) continue;
                 using (Stream file = IO.OpenFile(guid))
                 using (BinaryReader reader = new BinaryReader(file)) {
                     teChunkedData chunk = new teChunkedData(reader);

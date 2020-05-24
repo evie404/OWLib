@@ -20,9 +20,9 @@ namespace DataTool.ToolLogic.Dump {
             var outputPath = Path.Combine(flags.OutputPath, "filelists");
             CreateDirectorySafe(outputPath);
            
-            foreach (KeyValuePair<ushort,HashSet<ulong>> type in TrackedFiles) {
+            foreach (KeyValuePair<ushort,HashSet<teResourceGUID>> type in TrackedFiles) {
                 var outputFile = $"{Path.Combine(outputPath, type.Key.ToString("X3"))}.txt";
-                var files = type.Value.OrderBy(x => x).Select(teResourceGUID.AsString);
+                var files = type.Value.OrderBy(x => x).Select(x => x.ToString());
                 File.WriteAllLines(outputFile, files);
             }
         }
