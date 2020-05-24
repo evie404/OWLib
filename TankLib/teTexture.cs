@@ -140,13 +140,15 @@ namespace TankLib {
 
         public teResourceGUID GetPayloadGUID(teResourceGUID textureGUID, int offset) {
             if (Header.PayloadCount - offset - 1 < 0) return new teResourceGUID(0);
-            ulong payloadGUID = (textureGUID & 0xFFF0FFFFFFFFUL) | ((ulong)(byte)(Header.PayloadCount - offset - 1) << 32) | 0x0320000000000000UL;
+            // ulong payloadGUID = (textureGUID & 0xFFF0FFFFFFFFUL) | ((ulong)(byte)(Header.PayloadCount - offset - 1) << 32) | 0x0320000000000000UL;
+            teResourceGUID payloadGUID = new teResourceGUID(textureGUID);
+            payloadGUID.Type = 0x04D;
+            payloadGUID.Locale = (byte)(Header.PayloadCount - offset - 1);
             // so basically: thing | (payloadIdx & 0xF) << 32) | 0x320000000000000i64
 
             var type = textureGUID.Type;
-            if(type == 0xF1)
-            {
-                payloadGUID |= (ulong)1 << 40;
+            if(type == 0xF1) {
+                payloadGUID.Region = 2;
             } else if (type != 4) {
                 throw new Exception();
             }

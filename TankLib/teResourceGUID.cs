@@ -38,7 +38,9 @@ namespace TankLib {
         }
 
         private void SetAttribute(ulong value, teResourceGUIDAttribute attributes) {
-            GUID |= (value & (ulong) attributes);
+            var attr = (ulong) attributes;
+            GUID &= ~attr;
+            GUID |= (value & attr);
         }
 
         /// <summary>ID without type info</summary>
@@ -80,7 +82,7 @@ namespace TankLib {
         /// <summary>Demangled GUID type</summary>
         public ushort Type {
             get => (ushort) (FlipTypeBits(MangledType) + 1);
-            set => MangledType = (ushort) FlipTypeBits((ulong) (value) - 1);
+            set => MangledType = (ushort) FlipTypeBits((ulong) value - 1);
         }
 
         private static ulong FlipTypeBits(ulong num) {

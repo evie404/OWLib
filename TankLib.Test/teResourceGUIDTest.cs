@@ -107,9 +107,17 @@ namespace TankLib.Test {
         }
 
         [TestMethod]
-        public void TestSetType() {
+        public void TestSetType1() {
             // ReSharper disable once UseObjectOrCollectionInitializer
             var GUID = new teResourceGUID(0);
+            GUID.Type = 0xA5;
+            Assert.AreEqual((ushort) 0xA5, GUID.Type);
+        }
+
+        [TestMethod]
+        public void TestSetType2() {
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var GUID = new teResourceGUID(ulong.MaxValue);
             GUID.Type = 0xA5;
             Assert.AreEqual((ushort) 0xA5, GUID.Type);
         }
