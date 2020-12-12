@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using TACTLib.Helpers;
 using TankLib.Chunks;
 using TankLib.Helpers;
 
@@ -87,7 +88,7 @@ namespace TankLib {
 
                 IChunk chunk = Manager.CreateChunkInstance(entry.StringIdentifier, Header.StringIdentifier);
                 if (chunk != null) {                   
-                    using (SliceStream sliceStream = new SliceStream(reader.BaseStream, entry.Size)) {
+                    using (SliceStream sliceStream = new SliceStream(reader.BaseStream, entry.Size, true)) {
                        chunk.Parse(sliceStream);
                     }
                 }
