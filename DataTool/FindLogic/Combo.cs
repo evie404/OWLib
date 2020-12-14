@@ -1099,15 +1099,19 @@ namespace DataTool.FindLogic {
                     MaterialDataAsset materialDataInfo = new MaterialDataAsset(guid);
 
                     info.m_materialData[guid] = materialDataInfo;
-                    
-                    teMaterialData materialData = new teMaterialData(OpenFile(guid));
-                    if (materialData.Textures != null) {
-                        materialDataInfo.m_textureMap = new Dictionary<ulong, uint>();
-                        foreach (teMaterialData.Texture matDataTex in materialData.Textures) {
-                            Find(info, matDataTex.TextureGUID, replacements, materialDataContext);
-                            materialDataInfo.m_textureMap[matDataTex.TextureGUID] = matDataTex.NameHash;
+
+                    var stream = OpenFile(guid);
+                    if (stream != null) {
+                        teMaterialData materialData = new teMaterialData(stream);
+                        if (materialData.Textures != null) {
+                            materialDataInfo.m_textureMap = new Dictionary<ulong, uint>();
+                            foreach (teMaterialData.Texture matDataTex in materialData.Textures) {
+                                Find(info, matDataTex.TextureGUID, replacements, materialDataContext);
+                                materialDataInfo.m_textureMap[matDataTex.TextureGUID] = matDataTex.NameHash;
+                            }
                         }
                     }
+
                     break;
                 }
                 case 0xBF: {
