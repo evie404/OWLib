@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using DataTool.DataModels.Chat;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.JSON;
 using TankLib.STU.Types;
 using static DataTool.Program;

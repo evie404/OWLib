@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using DataTool;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.ToolLogic.Extract;
 using static DataTool.Program;
 using static DataTool.Helper.IO;
@@ -23,17 +23,17 @@ namespace TankPackage
         {
             Console.OutputEncoding = Encoding.UTF8;
 
-            Flags = FlagParser.Parse<ToolFlags>();
+            Flags = CommandLineFlags.ParseFlags<ToolFlags>();
             if (Flags == null)
             {
                 return;
             }
             var f = Flags;
-            
+
             InitStorage();
             InitMisc();
             InitKeys();
-            
+
             string[] modeArgs = Flags.Positionals.Skip(2).ToArray();
 
             switch (Flags.Mode.ToLower())
@@ -145,7 +145,7 @@ namespace TankPackage
                 records[entry.m_packageGUID] = apm.m_packageRecords[i];
             }
 
-            ICLIFlags flags = FlagParser.Parse<ExtractFlags>();
+            ICLIFlags flags = CommandLineFlags.ParseFlags<ExtractFlags>();
 
             void Body(ulong key) {
                 DataTool.FindLogic.Combo.ComboInfo info = new DataTool.FindLogic.Combo.ComboInfo();

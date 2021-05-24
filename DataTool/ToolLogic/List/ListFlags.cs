@@ -1,23 +1,20 @@
 ﻿using System;
-using DataTool.Flag;
+using DragonLib.CLI;
 using JetBrains.Annotations;
 
 namespace DataTool.ToolLogic.List {
     [Serializable, UsedImplicitly]
     public class ListFlags : ICLIFlags {
-        [CLIFlag(Default = false, Flag = "json", Help = "Output JSON to stderr", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool JSON;
+        [CLIFlag("json", Category = "List", Help = "Output JSON to stderr")]
+        public bool JSON { get; set; }
 
-        [CLIFlag(Flag = "out", NeedsValue = true, Help = "Output JSON file")]
-        [Alias("o")]
-        public string Output;
+        [CLIFlag("out", Aliases = new[] {"o"}, Category = "List", Help = "Output JSON file")]
+        public string Output { get; set; }
 
-        [CLIFlag(Default = false, Flag = "flatten", Help = "Flatten output", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool Flatten;
+        [CLIFlag("flatten", Category = "List", Help = "Flatten output", Hidden = true)]
+        public bool Flatten { get; set; }
 
-        [CLIFlag(Default = false, Flag = "simplify", Help = "Reduces the amount of information output by -list commands (doesn't work for JSON out)", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool Simplify;
-
-        public override bool Validate() => true;
+        [CLIFlag("simplify", Category = "List", Help = "Reduces the amount of information output by -list commands (doesn't work for JSON out)")]
+        public bool Simplify { get; set; }
     }
 }

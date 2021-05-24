@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using DataTool.FindLogic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using TankLib;
 using TACTLib.Container;
 using TACTLib.Core.Product.Tank;
@@ -46,12 +46,12 @@ namespace DataTool.ToolLogic.Extract.Debug {
 
                 if (fileType == 0x4) {
                     var locale = teResourceGUID.Locale(asset.Key);
-                    if (locale == 0xF) continue; // ? 
-                    if (locale == 0x1F) continue; // ? 
-                    if (locale == 0x2F) continue; // ? 
-                    if (locale == 0x3F) continue; // ? 
-                    if (locale == 0x4F) continue; // ? 
-                    if (locale == 0x5F) continue; // ? 
+                    if (locale == 0xF) continue; // ?
+                    if (locale == 0x1F) continue; // ?
+                    if (locale == 0x2F) continue; // ?
+                    if (locale == 0x3F) continue; // ?
+                    if (locale == 0x4F) continue; // ?
+                    if (locale == 0x5F) continue; // ?
                     if (teResourceGUID.Platform(asset.Key) == 0x8) continue; // effect images
                 }
 
@@ -78,7 +78,7 @@ namespace DataTool.ToolLogic.Extract.Debug {
                 throw new Exception("no output path");
             }
 
-            if (flags.Positionals.Length != 4) {
+            if (flags.Positionals.Count != 4) {
                 throw new Exception("incorrect params provided");
             }
 

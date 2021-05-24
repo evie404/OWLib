@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using DataTool;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.ToolLogic.List;
 using DataTool.JSON;
 
@@ -36,8 +36,8 @@ namespace ReplayMp4Tool {
                 files.Add(filePath);
             }
 
-            var flags = FlagParser.Parse<ListFlags>();
-            var toolFlags = FlagParser.Parse<ToolFlags>();
+            var flags = CommandLineFlags.ParseFlags<ListFlags>();
+            var toolFlags = CommandLineFlags.ParseFlags<ToolFlags>();
 
             DataTool.Program.Flags = new ToolFlags {
                 OverwatchDirectory = gameDir,

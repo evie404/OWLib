@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using DataTool.DataModels.Hero;
-using DataTool.Flag;
 using DataTool.JSON;
 using DataTool.ToolLogic.List;
+using DragonLib.CLI;
 using TACTLib.Client;
 using TACTLib.Client.HandlerArgs;
 using TACTLib.Core.Product.Tank;
@@ -16,7 +16,7 @@ namespace DataTool.ToolLogic.Dbg {
     [Tool("dbg-dump-localized-names", Description = "Dump strings for all languages", CustomFlags = typeof(ListFlags), IsSensitive = true, UtilNoArchiveNeeded = true)]
     public class DumpLocalizedNames : JSONTool, ITool {
         public void Parse(ICLIFlags toolFlags) {
-            if (toolFlags.Positionals.Length < 3) {
+            if (toolFlags.Positionals.Count < 3) {
                 throw new Exception("no output path");
             }
 

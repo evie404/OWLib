@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DataTool.FindLogic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using static DataTool.Program;
 using static DataTool.Helper.IO;
 

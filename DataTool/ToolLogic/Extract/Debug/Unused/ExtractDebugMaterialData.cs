@@ -1,4 +1,4 @@
-﻿using DataTool.Flag;
+﻿using DragonLib.CLI;
 
 namespace DataTool.ToolLogic.Extract.Debug.Unused {
     [Tool("extract-debug-materialdata", Description = "Extract material data hashes (debug)", CustomFlags = typeof(ExtractFlags), IsSensitive = true)]

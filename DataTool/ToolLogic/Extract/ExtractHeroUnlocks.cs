@@ -7,7 +7,7 @@ using System.Linq;
 using DataTool.DataModels;
 using DataTool.DataModels.Hero;
 using DataTool.FindLogic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.SaveLogic.Unlock;
 using DataTool.ToolLogic.Util;
@@ -133,7 +133,7 @@ namespace DataTool.ToolLogic.Extract {
         }
 
         public void SaveUnlocksForHeroes(ICLIFlags flags, Dictionary<ulong, STUHero> heroes, string basePath, bool npc = false) {
-            if (flags.Positionals.Length < 4) {
+            if (flags.Positionals.Count < 4) {
                 QueryHelp(QueryTypes);
                 return;
             }

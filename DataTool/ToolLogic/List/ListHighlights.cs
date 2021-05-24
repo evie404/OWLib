@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.JSON;
 using TankLib.Replay;

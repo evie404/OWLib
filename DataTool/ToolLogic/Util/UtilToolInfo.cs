@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.JSON;
 using DataTool.ToolLogic.List;
 using TACTLib.Container;
@@ -136,41 +136,35 @@ namespace DataTool.ToolLogic.Util {
             }
 
             private static void AddFlags(ICollection<Flag> flags, IReflect T) {
-                var fields = T.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
+                var fields = T.GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
                 foreach (var field in fields) {
                     var flagattr = field.GetCustomAttribute<CLIFlagAttribute>(true);
-                    if (flagattr == null || flagattr.AllPositionals || flagattr.Hidden) continue;
+                    if (flagattr == null || flagattr.Hidden) continue;
 
                     var flagJson = new Flag {
                         Name = flagattr.Flag,
                         HelpText = flagattr.Help,
-                        Choices = flagattr.Valid,
+                        Choices = flagattr.ValidValues,
                         IsPositional = flagattr.Positional != -1,
                         Position = flagattr.Positional,
-                        Required = flagattr.Required,
-                        TakesValue = flagattr.NeedsValue,
+                        Required = flagattr.IsRequired,
+                        TakesValue = flagattr.Default != default,
                         ValueType = FlagValueType.String
                     };
 
-                    if (flagattr.Parser != null) {
-                        var t = flagattr.Parser[1];
-
-                        switch (t) {
-                            case "CLIFlagBoolean":
-                                flagJson.ValueType = FlagValueType.Boolean;
-                                break;
-                            case "CLIFlagInt":
-                                flagJson.ValueType = FlagValueType.Int;
-                                break;
-                            case "CLIFlagByte":
-                                flagJson.ValueType = FlagValueType.Byte;
-                                break;
-                            case "CLIFlagChar":
-                                flagJson.ValueType = FlagValueType.Char;
-                                break;
-                            default:
-                                throw new Exception($"UtilCommands: unable to convert parser \"{t}\" to enum");
-                        }
+                    switch (field.PropertyType.Name) {
+                        case "Boolean":
+                            flagJson.ValueType = FlagValueType.Boolean;
+                            break;
+                        case "Int32":
+                            flagJson.ValueType = FlagValueType.Int;
+                            break;
+                        case "Byte":
+                            flagJson.ValueType = FlagValueType.Byte;
+                            break;
+                        case "String":
+                            flagJson.ValueType = FlagValueType.String;
+                            break;
                     }
 
                     flags.Add(flagJson);

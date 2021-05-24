@@ -1,5 +1,5 @@
 ﻿using DataTool.DataModels.GameModes;
-using DataTool.Flag;
+using DragonLib.CLI;
 using TankLib.STU.Types;
 using System.Collections.Generic;
 using DataTool.JSON;

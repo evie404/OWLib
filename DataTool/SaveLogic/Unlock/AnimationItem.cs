@@ -1,4 +1,4 @@
-﻿using DataTool.Flag;
+﻿using DragonLib.CLI;
 
 namespace DataTool.SaveLogic.Unlock {
     public static class AnimationItem {

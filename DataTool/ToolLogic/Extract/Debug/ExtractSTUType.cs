@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using DataTool.Flag;
+using DragonLib.CLI;
 using static DataTool.Program;
 using static DataTool.Helper.IO;
 using DataTool.Helper;
@@ -33,18 +33,15 @@ namespace DataTool.ToolLogic.Extract.Debug {
         };
 
         public void ExtractType(ICLIFlags toolFlags) {
-            string basePath;
-            if (toolFlags is ExtractFlags flags) {
-                basePath = flags.OutputPath;
-            } else {
+            if (!(toolFlags is ExtractFlags flags)) {
                 throw new Exception("no output path");
             }
 
-            string path = (toolFlags as ExtractFlags).OutputPath;
+            string path = flags.OutputPath;
 
-            if (toolFlags.Positionals.Length > 3) {
-                Logger.InfoLog($"Extracting {toolFlags.Positionals[3]} ");
-                WriteType(Convert.ToUInt16(toolFlags.Positionals[3], 16), path, flags.ConvertToXML);
+            if (flags.Positionals.Count > 3) {
+                Logger.InfoLog($"Extracting {flags.Positionals[3]} ");
+                WriteType(Convert.ToUInt16(flags.Positionals[3], 16), path, flags.ConvertToXML);
             } else {
                 Logger.InfoLog("Extracting most of STUs!");
                 foreach (var type in default_types) {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DragonLib.Indent;
 using DragonLib.XML;

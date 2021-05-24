@@ -1,4 +1,4 @@
-﻿using DataTool.Flag;
+﻿using DragonLib.CLI;
 
 namespace DataTool {
     public interface ITool {

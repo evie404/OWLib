@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using DataTool.Flag;
+using DragonLib.CLI;
 using TankLib.STU.Types;
 
 namespace DataTool.SaveLogic.Unlock {

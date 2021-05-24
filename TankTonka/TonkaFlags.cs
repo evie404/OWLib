@@ -2,32 +2,20 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using DataTool.Flag;
+using DragonLib.CLI;
 
 namespace TankTonka {
     [Serializable]
     public class TonkaFlags : ICLIFlags {
-        [CLIFlag(Flag = "directory", Positional = 0, NeedsValue = true, Help = "Overwatch Directory", Required = true)]
-        public string OverwatchDirectory;
-        
-        [CLIFlag(Default = null, Flag = "language", Help = "Language to load", NeedsValue = true, Valid = new[] { "deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW" })]
-        [Alias("L")]
-        [Alias("lang")]
-        public string Language;
+        [CLIFlag("directory", Positional = 0, Category = "Tonka", Help = "Overwatch Directory", IsRequired = true)]
+        public string OverwatchDirectory { get; set; }
 
-        [CLIFlag(Default = null, Flag = "speech-language", Help = "Speech Language to load", NeedsValue = true, Valid = new[] { "deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW" })]
-        [Alias("T")]
-        [Alias("speechlang")]
-        public string SpeechLanguage;
-        
-        public override bool Validate() => true;
-        
-        public static class Converter {
-            public static object CLIFlagTypeArray(List<string> @in) {
-                return @in.Select(x => ushort.Parse(x, NumberStyles.HexNumber)).ToList();
-            }
-        }
+        [CLIFlag("language", Category = "Tonka", Help = "Language to load", Aliases = new[] { "L", "lang" }, ValidValues = new[] { "deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW" })]
+        public string Language { get; set; }
+
+        [CLIFlag("speech-language", Category = "Tonka", Help = "Speech Language to load", Aliases = new[] { "T", "speechlang" }, ValidValues = new[] { "deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW" })]
+        public string SpeechLanguage { get; set; }
     }
-    
+
     // todo: i cba to make this work. maybe in the future or whatever
 }

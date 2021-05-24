@@ -11,7 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.SaveLogic;
 using DataTool.ToolLogic.Extract;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -248,7 +248,7 @@ namespace TankView {
 
             Task.Run(delegate {
                 try {
-                    var flags = FlagParser.Parse<ToolFlags>();
+                    var flags = CommandLineFlags.ParseFlags<ToolFlags>();
                     if (flags != null) {
                         ClientArgs.TextLanguage = flags.Language;
                         ClientArgs.SpeechLanguage = flags.SpeechLanguage;

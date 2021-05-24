@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.JSON;
 using TankLib;

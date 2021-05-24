@@ -1,4 +1,4 @@
-using DataTool.Flag;
+using DragonLib.CLI;
 using static DataTool.Program;
 
 namespace DataTool.ToolLogic.Extract {
@@ -11,12 +11,12 @@ namespace DataTool.ToolLogic.Extract {
             }
 
             var positionals = new System.Collections.Generic.List<string>(flags.Positionals) {"*|*=*"};
-            flags.Positionals = positionals.ToArray();
+            flags.Positionals = positionals;
             new ExtractHeroUnlocks().Parse(flags);
             SaveScratchDatabase();
             positionals.RemoveAt(positionals.Count - 1);
             positionals.Add("*");
-            flags.Positionals = positionals.ToArray();
+            flags.Positionals = positionals;
             new ExtractAbilities().Parse(flags);
             new ExtractGamemodeImages().Parse(flags);
             new ExtractGeneral().Parse(flags);

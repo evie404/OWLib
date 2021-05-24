@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using DataTool.Flag;
+using DragonLib.CLI;
 using static DataTool.Program;
 using DataTool.SaveLogic;
 using TankLib.STU.Types;

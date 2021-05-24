@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using DataTool.Flag;
+using DragonLib.CLI;
 
 namespace DataTool.SaveLogic.Unlock {
     public static class SprayAndIcon {

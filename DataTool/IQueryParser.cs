@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using TankLib.Helpers;
-using TankLib.STU.Types;
 using static DataTool.Helper.Logger;
 
 namespace DataTool {
@@ -161,8 +160,8 @@ namespace DataTool {
                 // todo: why is this needed
             }
 
-            string[] result = new string[flags.Positionals.Length - 3];
-            Array.Copy(flags.Positionals, 3, result, 0, flags.Positionals.Length - 3);
+            string[] result = new string[flags.Positionals.Count - 3];
+            flags.Positionals.CopyTo(3, result, 0, flags.Positionals.Count - 3);
 
             Dictionary<string, Dictionary<string, ParsedArg>> parsedTypes = new Dictionary<string, Dictionary<string, ParsedArg>>();
 

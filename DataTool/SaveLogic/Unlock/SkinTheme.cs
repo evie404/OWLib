@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using DataTool.DataModels.Hero;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using TankLib;
 using TankLib.STU.Types;

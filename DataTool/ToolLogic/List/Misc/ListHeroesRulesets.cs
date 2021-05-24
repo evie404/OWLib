@@ -2,7 +2,7 @@
 using System.Linq;
 using DataTool.DataModels.GameModes;
 using DataTool.DataModels.Hero;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.JSON;
 using TankLib;
 using static DataTool.Program;

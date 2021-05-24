@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using DataTool.DataModels.Hero;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.JSON;
 using TankLib;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using DataTool.DataModels;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.JSON;
 using static DataTool.Program;

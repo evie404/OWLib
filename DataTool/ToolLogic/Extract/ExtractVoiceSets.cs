@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.JSON;
 using TankLib;

@@ -1,21 +1,17 @@
 using System;
-using DataTool.Flag;
+using DragonLib.CLI;
 using JetBrains.Annotations;
 
 namespace DataTool.ToolLogic.Render {
     [Serializable, UsedImplicitly]
     public class RenderFlags : ICLIFlags {
-        [CLIFlag(Flag = "out-path", NeedsValue = true, Help = "Output path", Positional = 2, Required = true)]
-        public string OutputPath;
+        [CLIFlag("out-path", Category = "Render", Help = "Output path", Positional = 2, IsRequired = true)]
+        public string OutputPath { get; set; }
 
-        [CLIFlag(Default = 1920, Flag = "width", Help = "Screen Width", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagInt"})]
-        [Alias("w")]
-        public int Width;
+        [CLIFlag("width", Default = 1920, Aliases = new [] {"w"}, Category = "Render", Help = "Screen Width")]
+        public int Width { get; set; }
 
-        [CLIFlag(Default = 1080, Flag = "height", Help = "Screen Height", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagInt"})]
-        [Alias("H")]
-        public int Height;
-
-        public override bool Validate() => true;
+        [CLIFlag("height", Default = 1080, Aliases = new [] { "H"}, Flag = "height", Category = "Render", Help = "Screen Height")]
+        public int Height { get; set; }
     }
 }

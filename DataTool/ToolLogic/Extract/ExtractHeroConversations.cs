@@ -5,7 +5,7 @@ using System.Linq;
 using DataTool.DataModels;
 using DataTool.DataModels.Hero;
 using DataTool.FindLogic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using TankLib;
 using TankLib.STU.Types;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.ToolLogic.Extract;
 using TankLib;
 using TankLib.STU;

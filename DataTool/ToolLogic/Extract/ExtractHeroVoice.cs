@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using DataTool.FindLogic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using static DataTool.Helper.IO;
 using static DataTool.Helper.Logger;
@@ -58,7 +58,7 @@ namespace DataTool.ToolLogic.Extract {
                 throw new Exception("no output path");
             }
 
-            if (flags.Positionals.Length < 4) {
+            if (flags.Positionals.Count < 4) {
                 QueryHelp(QueryTypes);
                 return;
             }

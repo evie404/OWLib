@@ -2,7 +2,7 @@
 using System.IO;
 using DataTool.DataModels;
 using DataTool.FindLogic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using TankLib.STU.Types;
 using static DataTool.Program;
 using static DataTool.Helper.STUHelper;

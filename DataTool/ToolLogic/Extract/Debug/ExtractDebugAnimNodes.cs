@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.Serialization;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.JSON;
 using TankLib;
@@ -69,8 +69,8 @@ namespace DataTool.ToolLogic.Extract.Debug {
                     if (doneNodes.Contains(node.UniqueID)) continue;
                     doneNodes.Add(node.UniqueID);
                     root.nodes.Add(new GraphNode {x = node.Pos.X, y = node.Pos.Y, uuid = uuid, @class = "MaxObject", name = node.GetType().Name});
-                    
-                    
+
+
                     if (node.m_0DE1BA16 == null) continue;
                     foreach (STU_40274C18 stu_6C0Bbd69 in node.m_0DE1BA16) {
                         if (stu_6C0Bbd69.m_AF632ACD != null) {

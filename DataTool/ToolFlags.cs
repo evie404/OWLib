@@ -1,101 +1,74 @@
 ﻿using System;
-using DataTool.Flag;
+using DragonLib.CLI;
 using JetBrains.Annotations;
 
 namespace DataTool {
     [Serializable, UsedImplicitly]
     public class ToolFlags : ICLIFlags {
-        [CLIFlag(Flag = "directory", Positional = 0, NeedsValue = true, Required = true, Help = "Overwatch Directory")]
-        public string OverwatchDirectory;
+        [CLIFlag("directory", Positional = 0, IsRequired = true, Category = "General", Help = "Overwatch Directory")]
+        public string OverwatchDirectory { get; set; }
 
-        [CLIFlag(Flag = "mode", Positional = 1, NeedsValue = true, Required = true, Help = "Extraction Mode")]
-        public string Mode;
+        [CLIFlag("mode", Positional = 1, IsRequired = true, Category = "General", Help = "Extraction Mode")]
+        public string Mode { get; set; }
 
-        [CLIFlag(Default = false, Flag = "online", Help = "Allow downloading of corrupted files", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool Online;
+        [CLIFlag("online", Default = false, Category = "General", Help = "Allow downloading of corrupted files")]
+        public bool Online { get; set; }
 
-        [CLIFlag(Default = null, Flag = "language", Help = "Language to load", NeedsValue = true, Valid = new[] {"deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW"})]
-        [Alias("L")]
-        public string Language;
+        [CLIFlag("language", Aliases = new[] { "L" }, Category = "General", Help = "Language to load", ValidValues = new[] {"deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW"})]
+        public string Language { get; set; }
 
-        [CLIFlag(Default = null, Flag = "speech-language", Help = "Speech Language to load", NeedsValue = true, Valid = new[] {"deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW"})]
-        [Alias("T")]
-        public string SpeechLanguage;
+        [CLIFlag("speech-language", Aliases = new[] { "T" }, Category = "General", Help = "Speech Language to load", ValidValues = new[] {"deDE", "enUS", "esES", "esMX", "frFR", "itIT", "jaJP", "koKR", "plPL", "ptBR", "ruRU", "zhCN", "zhTW"})]
+        public string SpeechLanguage { get; set; }
 
-        [CLIFlag(Default = false, Flag = "graceful-exit", Help = "When enabled don't crash on invalid CMF Encryption", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool GracefulExit;
+        [CLIFlag("graceful-exit", Category = "General", Help = "When enabled don't crash on invalid CMF Encryption")]
+        public bool GracefulExit { get; set; }
 
-        [CLIFlag(Default = true, Flag = "cache", Help = "Cache Index files from CDN", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool UseCache;
+        [CLIFlag("cache", Default = true, Category = "General", Help = "Cache Index files from CDN")]
+        public bool UseCache { get; set; }
 
-        [CLIFlag(Default = true, Flag = "cache-data", Help = "Cache Data files from CDN", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        // ReSharper disable once InconsistentNaming
-        public bool CacheCDNData;
+        [CLIFlag("cache-data", Default = true, Category = "General", Help = "Cache Data files from CDN")]
+        public bool CacheCDNData { get; set; }
 
-        [CLIFlag(Default = false, Flag = "validate-cache", Help = "Validate files from CDN", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool ValidateCache;
+        [CLIFlag("validate-cache", Category = "General", Help = "Validate files from CDN")]
+        public bool ValidateCache { get; set; }
 
-        [CLIFlag(Default = false, Flag = "quiet", Help = "Suppress majority of output messages", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        [Alias("q")]
-        [Alias("silent")]
-        public bool Quiet;
+        [CLIFlag("quiet", Aliases = new[] { "q", "silent" }, Category = "General", Help = "Suppress majority of output messages")]
+        public bool Quiet { get; set; }
 
-        [CLIFlag(Default = false, Flag = "string-guid", Help = "Returns all strings as their GUID instead of their value", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"}, Hidden = true)]
-        public bool StringsAsGuids;
+        [CLIFlag("string-guid", Category = "General", Help = "Returns all strings as their GUID instead of their value", Hidden = true)]
+        public bool StringsAsGuids { get; set; }
 
-        [CLIFlag(Default = false, Flag = "skip-keys", Help = "Skip key detection", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool SkipKeys;
+        [CLIFlag("skip-keys", Category = "General", Help = "Skip key detection", Hidden = true)]
+        public bool SkipKeys { get; set; }
 
-        [CLIFlag(Default = false, Flag = "rcn", Help = "use (R)CN? CMF", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool RCN;
+        [CLIFlag("rcn", Category = "General", Help = "use (R)CN? CMF", Hidden = true)]
+        public bool RCN { get; set; }
 
-        // todo: maybe somebody should implement these
-        // [CLIFlag(Flag = "force-replace-guid", Help = "Replace these GUIDs", Parser = new[] { "DataTool.Flag.Converter", "CLIFlagGUIDDict" })]
-        // public Dictionary<ulong, ulong> ForcedReplacements;
-        //
-        // [CLIFlag(Flag = "ignore-guid", Help = "Ignore these GUIDs", Parser = new[] { "DataTool.Flag.Converter", "CLIFlagGUIDArray" })]
-        // public List<ulong> IgnoreGUIDs;
+        [CLIFlag("deduplicate-textures", Aliases = new [] { "0" }, Category = "General", Help = "Re-use textures from other models")]
+        public bool Deduplicate { get; set; }
 
-        [CLIFlag(Default = false, Flag = "deduplicate-textures", Help = "Re-use textures from other models", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        [Alias("0")]
-        public bool Deduplicate;
+        [CLIFlag("scratchdb", Category = "General", Help = "Directory for persistent database storage for deduplication info")]
+        public string ScratchDBPath { get; set; }
 
-        [CLIFlag(Default = null, Flag = "scratchdb", NeedsValue = true, Help = "Directory for persistent database storage for deduplication info")]
-        public string ScratchDBPath;
+        [CLIFlag("no-names", Category = "General", Help = "Don't use names for textures")]
+        public bool NoNames { get; set; }
 
-        [CLIFlag(Default = false, Flag = "args-save", Help = "Save current arguments", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        [Alias("args")]
-        public bool SaveArgs;
+        [CLIFlag("canonical-names", Category = "General", Help = "Only use canonical names", Hidden = true)]
+        public bool OnlyCanonical { get; set; }
 
-        [CLIFlag(Default = false, Flag = "args-reset", Help = "Reset program arguments", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        [Alias("argr")]
-        public bool ResetArgs;
+        [CLIFlag("no-guid-names", Category = "General", Help = "Completely disables using GUIDNames", Hidden = true)]
+        public bool NoGuidNames { get; set; }
 
-        [CLIFlag(Default = false, Flag = "args-delete", Help = "Delete saved program arguments", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        [Alias("argd")]
-        public bool DeleteArgs;
+        [CLIFlag("extract-shaders", Category = "General", Help = "Extract shader files", Hidden = true)]
+        public bool ExtractShaders { get; set; }
 
-        [CLIFlag(Default = false, Flag = "no-names", Help = "Don't use names for textures", Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool NoNames;
+        [CLIFlag("enable-async-save", Category = "General", Help = "Enable asynchronous saving", Hidden = true)]
+        public bool EnableAsyncSave { get; set; }
 
-        [CLIFlag(Default = false, Flag = "canonical-names", Help = "Only use canonical names", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool OnlyCanonical;
+        [CLIFlag("disable-language-registry", Category = "General", Help = "Disable fetching language from registry", Hidden = true)]
+        public bool NoLanguageRegistry { get; set; }
 
-        [CLIFlag(Default = false, Flag = "no-guid-names", Help = "Completely disables using GUIDNames", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool NoGuidNames;
-
-        [CLIFlag(Default = false, Flag = "extract-shaders", Help = "Extract shader files", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool ExtractShaders;
-
-        [CLIFlag(Default = false, Flag = "enable-async-save", Help = "Enable asynchronous saving", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool EnableAsyncSave;
-
-        [CLIFlag(Default = false, Flag = "disable-language-registry", Help = "Disable fetching language from registry", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool NoLanguageRegistry;
-
-        [CLIFlag(Default = false, Flag = "allow-manifest-fallback", Help = "Allows falling back to older versions if manfiest doesn't exist", Hidden = true, Parser = new[] {"DataTool.Flag.Converter", "CLIFlagBoolean"})]
-        public bool TryManifestFallback;
-
-        public override bool Validate() => true;
+        [CLIFlag("allow-manifest-fallback", Category = "General", Help = "Allows falling back to older versions if manfiest doesn't exist", Hidden = true)]
+        public bool TryManifestFallback { get; set; }
     }
 }

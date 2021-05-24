@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using DataTool.ConvertLogic;
-using DataTool.Flag;
+using DragonLib.CLI;
 using DataTool.Helper;
 using DataTool.SaveLogic;
 using Microsoft.Win32;
@@ -65,41 +65,21 @@ namespace DataTool {
 
             var tools = GetTools();
 
-        #if DEBUG
-            FlagParser.CheckCollisions(typeof(ToolFlags), (flag, duplicate) => {
-                Logger.Error("Flag", $"The flag \"{flag}\" from {duplicate} is a duplicate!");
-            });
-        #endif
-
-            FlagParser.LoadArgs();
-
+            var args = Environment.GetCommandLineArgs().SkipWhile(x => x.EndsWith(".exe") || x.EndsWith(".dll")).ToArray();
             Logger.Info("Core", $"{Assembly.GetExecutingAssembly().GetName().Name} v{Util.GetVersion(typeof(Program).Assembly)}");
 
-            Logger.Info("Core", $"CommandLine: [{string.Join(", ", FlagParser.AppArgs.Select(x => $"\"{x}\""))}]");
+            Logger.Info("Core", $"CommandLine: [{string.Join(", ", args)}]");
 
-            Flags = FlagParser.Parse<ToolFlags>(full => PrintHelp(full, tools));
+            Flags = CommandLineFlags.ParseFlags<ToolFlags>((flags, invoked) => {
+                CommandLineFlags.PrintHelp(flags, invoked);
+                PrintHelp(tools, invoked);
+            }, args);
             if (Flags == null)
                 return;
 
-            Logger.Info("Core", $"CommandLineFile: {FlagParser.ArgFilePath}");
 
-            if (Flags.SaveArgs) {
-                FlagParser.AppArgs = FlagParser.AppArgs.Where(x => !x.StartsWith("--arg")).ToArray();
-                FlagParser.SaveArgs(Flags.OverwatchDirectory);
-            } else if (Flags.ResetArgs || Flags.DeleteArgs) {
-                FlagParser.ResetArgs();
-
-                if (Flags.DeleteArgs)
-                    FlagParser.DeleteArgs();
-
-                Logger.Info("Core", $"CommandLineNew: [{string.Join(", ", FlagParser.AppArgs.Select(x => $"\"{x}\""))}]");
-                Flags = FlagParser.Parse<ToolFlags>(full => PrintHelp(full, tools));
-                if (Flags == null)
-                    return;
-            }
-
-            if (string.IsNullOrWhiteSpace(Flags.OverwatchDirectory) || string.IsNullOrWhiteSpace(Flags.Mode) || Flags.Help) {
-                PrintHelp(false, tools);
+            if (string.IsNullOrWhiteSpace(Flags.OverwatchDirectory) || string.IsNullOrWhiteSpace(Flags.Mode)) {
+                PrintHelp(tools, true);
                 return;
             }
 
@@ -119,7 +99,7 @@ namespace DataTool {
                 if (attribute.CustomFlags != null) {
                     var flags = attribute.CustomFlags;
                     if (typeof(ICLIFlags).IsAssignableFrom(flags))
-                        targetToolFlags = typeof(FlagParser).GetMethod(nameof(FlagParser.Parse), new Type[] { })
+                        targetToolFlags = typeof(CommandLineFlags).GetMethod(nameof(CommandLineFlags.ParseFlags), new [] { typeof(string[]) })
                                               ?.MakeGenericMethod(flags)
                                               .Invoke(null, null) as ICLIFlags;
                 }
@@ -132,8 +112,7 @@ namespace DataTool {
             }
 
             if (targetTool == null) {
-                FlagParser.Help<ToolFlags>(false, new Dictionary<string, string>());
-                PrintHelp(false, tools);
+                PrintHelp(tools, true);
                 return;
             }
 
@@ -355,23 +334,21 @@ namespace DataTool {
             }
         }
 
-        private static void PrintHelp(bool full, IEnumerable<Type> eTools) {
+        private static void PrintHelp(IEnumerable<Type> eTools, bool invoked) {
             var tools = new List<Type>(eTools);
             tools.Sort(new ToolComparer());
-            if (!full) {
-                Log();
-                Log("Modes:");
-                Log("  {0, -26} | {1, -40}", "mode", "description");
-                Log("".PadLeft(94, '-'));
-                foreach (var t in tools) {
-                    var attribute = t.GetCustomAttribute<ToolAttribute>();
-                    if (attribute.IsSensitive && !Debugger.IsAttached) continue;
+            Log();
+            Log("Modes:");
+            Log("  {0, -26} | {1, -40}", "mode", "description");
+            Log("".PadLeft(94, '-'));
+            foreach (var t in tools) {
+                var attribute = t.GetCustomAttribute<ToolAttribute>();
+                if (attribute.IsSensitive && !Debugger.IsAttached) continue;
 
-                    var desc = attribute.Description;
-                    if (attribute.Description == null) desc = "";
+                var desc = attribute.Description;
+                if (attribute.Description == null) desc = "";
 
-                    Log("  {0, -26} | {1}", attribute.Keyword, desc);
-                }
+                Log("  {0, -26} | {1}", attribute.Keyword, desc);
             }
 
             var sortedTools = new Dictionary<string, List<Type>>();
@@ -396,15 +373,10 @@ namespace DataTool {
                 if (attribute?.CustomFlags == null) continue;
                 var flags = attribute.CustomFlags;
                 if (!typeof(ICLIFlags).IsAssignableFrom(attribute.CustomFlags)) continue;
-                if (!full) {
-                    Log();
-                    Log("Flags for {0}-*", toolType.Key);
-                    typeof(FlagParser).GetMethod(nameof(FlagParser.FullHelp))
-                        ?.MakeGenericMethod(flags)
-                        .Invoke(null, new object[] { null, true });
-                } else {
-                    //
-                }
+                Log();
+                Log("Flags for {0}-*", toolType.Key);
+                var flagList = flags.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty).Select(x => (x.GetCustomAttribute<CLIFlagAttribute>(true), x.PropertyType)).ToList();
+                CommandLineFlags.PrintHelp(flagList, true);
             }
             ToolNameSpellCheck();
         }
