@@ -165,6 +165,8 @@ namespace DataTool {
 
         private static void InitTankSettings() {
             Logger.ShowDebug = Debugger.IsAttached;
+            DragonLib.IO.Logger.ShowDebug = Debugger.IsAttached;
+            DragonLib.IO.Logger.ShowTime = false;
         }
 
         public static void InitMisc() {
@@ -338,10 +340,7 @@ namespace DataTool {
         private static void PrintHelp(IEnumerable<Type> eTools, bool invoked) {
             var tools = new List<Type>(eTools);
             tools.Sort(new ToolComparer());
-            Log();
-            Log("Modes:");
-            Log("  {0, -26} | {1, -40}", "mode", "description");
-            Log("".PadLeft(94, '-'));
+            DragonLib.IO.Logger.Info("FLAG", "Modes:");
             foreach (var t in tools) {
                 var attribute = t.GetCustomAttribute<ToolAttribute>();
                 if (attribute.IsSensitive && !Debugger.IsAttached) continue;
@@ -349,7 +348,7 @@ namespace DataTool {
                 var desc = attribute.Description;
                 if (attribute.Description == null) desc = "";
 
-                Log("  {0, -26} | {1}", attribute.Keyword, desc);
+                DragonLib.IO.Logger.Info("FLAG", $"  {attribute.Keyword,-62} {desc}");
             }
 
             var sortedTools = new Dictionary<string, List<Type>>();
@@ -374,8 +373,7 @@ namespace DataTool {
                 if (attribute?.CustomFlags == null) continue;
                 var flags = attribute.CustomFlags;
                 if (!typeof(ICLIFlags).IsAssignableFrom(attribute.CustomFlags)) continue;
-                Log();
-                Log("Flags for {0}-*", toolType.Key);
+                DragonLib.IO.Logger.Info("FLAG", $"Flags for {toolType.Key}-*");
                 var flagList = flags.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty).Select(x => (x.GetCustomAttribute<CLIFlagAttribute>(true), x.PropertyType)).ToList();
                 CommandLineFlags.PrintHelp(flagList, true);
             }
