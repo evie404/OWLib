@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace DataTool.ToolLogic.List {
     [Serializable, UsedImplicitly]
-    public class ListFlags : ICLIFlags {
+    public class ListFlags : ToolFlags {
         [CLIFlag("json", Category = "List", Help = "Output JSON to stderr")]
         public bool JSON { get; set; }
 

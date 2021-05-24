@@ -70,16 +70,18 @@ namespace DataTool {
 
             Logger.Info("Core", $"CommandLine: [{string.Join(", ", args)}]");
 
+            DragonLib.IO.Logger.ShowCategory = false;
+
             Flags = CommandLineFlags.ParseFlags<ToolFlags>((flags, invoked) => {
                 CommandLineFlags.PrintHelp(flags, invoked);
-                PrintHelp(tools, invoked);
+                PrintHelp(tools);
             }, args);
             if (Flags == null)
                 return;
 
 
             if (string.IsNullOrWhiteSpace(Flags.OverwatchDirectory) || string.IsNullOrWhiteSpace(Flags.Mode)) {
-                PrintHelp(tools, true);
+                PrintHelp(tools);
                 return;
             }
 
@@ -113,11 +115,13 @@ namespace DataTool {
             }
 
             if (targetTool == null) {
-                PrintHelp(tools, true);
+                PrintHelp(tools);
                 return;
             }
 
             #endregion
+
+            DragonLib.IO.Logger.ShowCategory = true;
 
             if (!targetToolAttributes.UtilNoArchiveNeeded) {
                 try {
@@ -337,7 +341,7 @@ namespace DataTool {
             }
         }
 
-        private static void PrintHelp(IEnumerable<Type> eTools, bool invoked) {
+        private static void PrintHelp(IEnumerable<Type> eTools) {
             var tools = new List<Type>(eTools);
             tools.Sort(new ToolComparer());
             DragonLib.IO.Logger.Info("FLAG", "Modes:");
@@ -367,16 +371,6 @@ namespace DataTool {
                     .Add(t);
             }
 
-            foreach (var toolType in sortedTools) {
-                var firstTool = toolType.Value.FirstOrDefault();
-                var attribute = firstTool?.GetCustomAttribute<ToolAttribute>();
-                if (attribute?.CustomFlags == null) continue;
-                var flags = attribute.CustomFlags;
-                if (!typeof(ICLIFlags).IsAssignableFrom(attribute.CustomFlags)) continue;
-                DragonLib.IO.Logger.Info("FLAG", $"Flags for {toolType.Key}-*");
-                var flagList = flags.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.SetProperty).Select(x => (x.GetCustomAttribute<CLIFlagAttribute>(true), x.PropertyType)).ToList();
-                CommandLineFlags.PrintHelp(flagList, true);
-            }
             ToolNameSpellCheck();
         }
 

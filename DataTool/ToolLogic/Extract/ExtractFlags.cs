@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 namespace DataTool.ToolLogic.Extract {
     [Serializable]
     [UsedImplicitly]
-    public class ExtractFlags : ICLIFlags {
+    public class ExtractFlags : ToolFlags {
         [CLIFlag("out-path", Category = "Extract", Help = "Output path", Positional = 2, IsRequired = true)]
         public string OutputPath { get; set; }
 

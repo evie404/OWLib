@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace DataTool.ToolLogic.Render {
     [Serializable, UsedImplicitly]
-    public class RenderFlags : ICLIFlags {
+    public class RenderFlags : ToolFlags {
         [CLIFlag("out-path", Category = "Render", Help = "Output path", Positional = 2, IsRequired = true)]
         public string OutputPath { get; set; }
 
