@@ -98,10 +98,11 @@ namespace DataTool {
 
                 if (attribute.CustomFlags != null) {
                     var flags = attribute.CustomFlags;
-                    if (typeof(ICLIFlags).IsAssignableFrom(flags))
-                        targetToolFlags = typeof(CommandLineFlags).GetMethod(nameof(CommandLineFlags.ParseFlags), new [] { typeof(string[]) })
+                    if (typeof(ICLIFlags).IsAssignableFrom(flags)) {
+                        targetToolFlags = typeof(CommandLineFlags).GetMethod(nameof(CommandLineFlags.ParseFlags), new[] { typeof(string[]) })
                                               ?.MakeGenericMethod(flags)
-                                              .Invoke(null, null) as ICLIFlags;
+                                              .Invoke(null, new object[] { args }) as ICLIFlags;
+                    }
                 }
 
                 break;
